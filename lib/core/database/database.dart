@@ -46,14 +46,24 @@ class UsageEvents extends Table {
   Set<Column> get primaryKey => {id};
 }
 
-@DriftDatabase(tables: [Subscriptions, UsageEvents])
+class AppSettings extends Table {
+  TextColumn get key => text()();
+  TextColumn get value => text()();
+  @override
+  Set<Column> get primaryKey => {key};
+}
+
+@DriftDatabase(tables: [Subscriptions, UsageEvents, AppSettings])
 class TikoDatabase extends _$TikoDatabase {
   TikoDatabase() : super(driftDatabase(name: 'tiko'));
   TikoDatabase.forTesting(super.executor);
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
   @override
   MigrationStrategy get migration => MigrationStrategy(
+    onUpgrade: (migrator, from, to) async {
+      if (from < 2) await migrator.createTable(appSettings);
+    },
     beforeOpen: (_) async {
       await customStatement('PRAGMA foreign_keys = ON');
     },

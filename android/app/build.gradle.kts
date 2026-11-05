@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.tiko.tiko"
+    namespace = "com.tiko.app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -16,7 +16,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.tiko.tiko"
+        applicationId = "com.tiko.app"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion

@@ -1,0 +1,290 @@
+{
+  "@@locale": "en",
+  "home": "Home",
+  "analytics": "Analytics",
+  "history": "History",
+  "settings": "Settings",
+  "everyUseCounts": "Every use counts.",
+  "usageHistory": "Usage history",
+  "createCounter": "Create counter",
+  "detailsHistory": "Details & history",
+  "couldNotLoadCounters": "Could not load counters.",
+  "couldNotLoadUsage": "Could not load usage.",
+  "makeEveryUseCount": "Make every use count",
+  "createACounterForYourPassMembershipOrPrepaidService": "Create a counter for your pass, membership, or prepaid service.",
+  "noUsesRecordedYet": "No uses recorded yet",
+  "outsideValidityPeriod": "Outside validity period",
+  "recordThisUseAnyway": "Record this use anyway?",
+  "cancel": "Cancel",
+  "recordUse": "Record use",
+  "undo": "Undo",
+  "couldNotUndoPleaseRetry": "Could not undo. Please retry.",
+  "couldNotSaveThisUsePleaseRetry": "Could not save this use. Please retry.",
+  "label1USE": "+1 USE",
+  "subscription": "Subscription",
+  "allSubscriptions": "All subscriptions",
+  "allDates": "All dates",
+  "clearDateFilter": "Clear date filter",
+  "subscriptionNoLongerExistsSelectAnotherSubscription": "Subscription no longer exists. Select another subscription.",
+  "couldNotLoadHistoryTapToRetry": "Could not load history. Tap to retry.",
+  "noUsageEventsForTheseFilters": "No usage events for these filters.",
+  "loadMore": "Load more",
+  "subscriptionUnavailable": "Subscription unavailable",
+  "eventActions": "Event actions",
+  "editEvent": "Edit event",
+  "deleteEvent": "Delete event",
+  "deleteEventLabel": "Delete event?",
+  "thisUsageEventWillBePermanentlyDeleted": "This usage event will be permanently deleted.",
+  "delete": "Delete",
+  "couldNotDeleteEventPleaseRetry": "Could not delete event. Please retry.",
+  "addForgottenUse": "Add forgotten use",
+  "editUsageEvent": "Edit usage event",
+  "couldNotLoadSubscriptions": "Could not load subscriptions.",
+  "createOrRestoreASubscriptionBeforeAddingUsage": "Create or restore a subscription before adding usage.",
+  "chooseASubscription": "Choose a subscription",
+  "restoreThisSubscriptionBeforeAddingUsage": "Restore this subscription before adding usage.",
+  "date": "Date",
+  "time": "Time",
+  "quantity": "Quantity",
+  "enterAPositiveWholeNumber": "Enter a positive whole number",
+  "noteOptional": "Note (optional)",
+  "saving": "Saving…",
+  "saveEvent": "Save event",
+  "couldNotSaveEventPleaseRetry": "Could not save event. Please retry.",
+  "thisDateIsOutsideTheSubscriptionValidityPeriodSaveThisUseAnyway": "This date is outside the subscription validity period. Save this use anyway?",
+  "saveAnyway": "Save anyway",
+  "archived": "Archived",
+  "noExpiration": "No expiration",
+  "manageSubscription": "Manage subscription",
+  "editSubscription": "Edit subscription",
+  "renewSubscription": "Renew subscription",
+  "restoreSubscription": "Restore subscription",
+  "archiveSubscription": "Archive subscription",
+  "deleteSubscription": "Delete subscription",
+  "deleteSubscriptionLabel": "Delete subscription?",
+  "couldNotSaveChangesPleaseRetry": "Could not save changes. Please retry.",
+  "couldNotLoadSubscription": "Could not load subscription.",
+  "subscriptionNotFound": "Subscription not found.",
+  "prepaidCost": "Prepaid cost",
+  "startDate": "Start date",
+  "endDate": "End date",
+  "averageCostPerUse": "Average cost per use",
+  "noUsesYet": "No uses yet",
+  "singleUsePrice": "Single-use price",
+  "equivalentIndividualCost": "Equivalent individual cost",
+  "unrecoveredCost": "Unrecovered cost",
+  "netSavings": "Net savings",
+  "breakEvenThreshold": "Break-even threshold",
+  "remainingUntilBreakEven": "Remaining until break-even",
+  "breakEvenProgress": "Break-even progress",
+  "savingsPercentage": "Savings percentage",
+  "relatedSubscriptionPeriods": "Related subscription periods",
+  "recentUsage": "Recent usage",
+  "viewFullHistory": "View full history",
+  "name": "Name",
+  "enterAName": "Enter a name",
+  "descriptionOptional": "Description (optional)",
+  "category": "Category",
+  "icon": "Icon",
+  "color": "Color",
+  "totalPrice": "Total price",
+  "enterAValidPrice": "Enter a valid price",
+  "currency": "Currency",
+  "singleUsePriceOptional": "Single-use price (optional)",
+  "enterAPositivePrice": "Enter a positive price",
+  "endDateOptional": "End date (optional)",
+  "clearEndDate": "Clear end date",
+  "renew": "Renew",
+  "create": "Create",
+  "save": "Save",
+  "couldNotSaveCounterPleaseRetry": "Could not save counter. Please retry.",
+  "createASubscriptionAndRecordAUseToSeeYourPatterns": "Create a subscription and record a use to see your patterns.",
+  "totalRecordedUsage": "Total recorded usage",
+  "daily": "Daily",
+  "weekly": "Weekly",
+  "monthly": "Monthly",
+  "last12Weeks": "Last 12 weeks",
+  "lighterSquaresIndicateFewerUsesTapASquareForItsDate": "Lighter squares indicate fewer uses. Tap a square for its date.",
+  "actualResults": "Actual results",
+  "averageUsesPerWeek": "Average uses per week",
+  "averageUsesPerMonth": "Average uses per month",
+  "daysSinceLastUse": "Days since last use",
+  "notAvailable": "Not available",
+  "projections": "Projections",
+  "estimatesFollowYourAveragePaceDuringValidityTheyAreNotGuaranteed": "Estimates follow your average pace during validity. They are not guaranteed.",
+  "estimatedBreakEvenDate": "Estimated break-even date",
+  "alreadyReached": "Already reached",
+  "notEnoughActivity": "Not enough activity",
+  "atThisPaceBreakEvenIsAfterExpiration": "At this pace, break-even is after expiration.",
+  "projectedCostPerUseAtExpiration": "Projected cost per use at expiration",
+  "projectionsNeed7DaysOfHistoryWithActivityOnAtLeast3DatesExpiredAndArchivedP": "Projections need 7 days of history with activity on at least 3 dates. Expired and archived periods are not forecast.",
+  "chooseASubscriptionForFinancialResultsAndProjections": "Choose a subscription for financial results and projections.",
+  "appearance": "Appearance",
+  "system": "System",
+  "light": "Light",
+  "dark": "Dark",
+  "language": "Language",
+  "hapticFeedback": "Haptic feedback",
+  "aGentleTapWhenUsageIsRecorded": "A gentle tap when usage is recorded",
+  "yourData": "Your data",
+  "everythingStaysOnThisDeviceSaveABackupBeforeChangingPhones": "Everything stays on this device. Save a backup before changing phones.",
+  "tiko10WorksEntirelyOffline": "Tiko 1.0 · Works entirely offline",
+  "couldNotSaveSettingsPleaseRetry": "Could not save settings. Please retry.",
+  "exportJSONBackup": "Export JSON backup",
+  "importJSONBackup": "Import JSON backup",
+  "exportUsageCSV": "Export usage CSV",
+  "importBackup": "Import backup?",
+  "import": "Import",
+  "couldNotCompleteExportOrImportPleaseRetry": "Could not complete export or import. Please retry.",
+  "invalidOrConflictingBackupNothingWasImported": "Invalid or conflicting backup. Nothing was imported.",
+  "averageCostOverTime": "Average cost over time",
+  "archivedSubscriptions": "Archived subscriptions",
+  "starterTemplateOptional": "Starter template (optional)",
+  "custom": "Custom",
+  "trolleybus": "Trolleybus",
+  "gym": "Gym",
+  "uses": "{count, plural, one{1 use} other{{count} uses}}",
+  "@uses": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "remainingUses": "{count, plural, one{1 use until break-even} other{{count} uses until break-even}}",
+  "@remainingUses": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "costPerUse": "{amount} / use",
+  "@costPerUse": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "prepaid": "{amount} prepaid",
+  "@prepaid": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "recordedAt": "Recorded at {time}",
+  "@recordedAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "todayDate": "Today · {date}",
+  "@todayDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "yesterdayDate": "Yesterday · {date}",
+  "@yesterdayDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "startsOn": "Starts {date}",
+  "@startsOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "expiresOn": "Expires {date}",
+  "@expiresOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "expiredOn": "Expired {date}",
+  "@expiredOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "importSummary": "Imported {added} records; skipped {skipped} existing records.",
+  "@importSummary": {
+    "placeholders": {
+      "added": {
+        "type": "int"
+      },
+      "skipped": {
+        "type": "int"
+      }
+    }
+  },
+  "importPreview": "{subscriptions} subscriptions and {events} events. Existing identical records will be skipped. Conflicting IDs reject the whole import. Appearance, language and haptics will also be restored.",
+  "@importPreview": {
+    "placeholders": {
+      "subscriptions": {
+        "type": "int"
+      },
+      "events": {
+        "type": "int"
+      }
+    }
+  },
+  "deleteSubscriptionPrompt": "Delete {name} and all its usage events? Other renewal periods will be preserved.",
+  "@deleteSubscriptionPrompt": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "archivedName": "{name} (archived)",
+  "@archivedName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "chartTooltip": "{date}: {count, plural, one{1 use} other{{count} uses}}",
+  "@chartTooltip": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "teal": "Teal",
+  "indigo": "Indigo",
+  "violet": "Violet",
+  "amber": "Amber",
+  "red": "Red",
+  "ticketIcon": "Pass",
+  "fitnessIcon": "Fitness",
+  "bookIcon": "Reading",
+  "coffeeIcon": "Coffee",
+  "travelIcon": "Travel",
+  "otherIcon": "Other",
+  "openError": "Could not open Tiko. Tap to retry."
+}

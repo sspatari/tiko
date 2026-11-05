@@ -21,6 +21,8 @@ class FinancialSummary {
       : savingsMinorUnits! / equivalentMinorUnits! * 100;
 }
 
+const maxFinancialInteger = 9007199254740991;
+
 class FinancialCalculator {
   const FinancialCalculator();
   FinancialSummary calculate({
@@ -28,16 +30,25 @@ class FinancialCalculator {
     required Iterable<int> quantities,
     int? referenceMinorUnits,
   }) {
-    if (costMinorUnits < 0) {
+    if (costMinorUnits < 0 || costMinorUnits > maxFinancialInteger) {
       throw ArgumentError.value(costMinorUnits, 'costMinorUnits');
     }
-    if (referenceMinorUnits != null && referenceMinorUnits <= 0) {
+    if (referenceMinorUnits != null &&
+        (referenceMinorUnits <= 0 ||
+            referenceMinorUnits > maxFinancialInteger)) {
       throw ArgumentError.value(referenceMinorUnits, 'referenceMinorUnits');
     }
     var uses = 0;
     for (final quantity in quantities) {
-      if (quantity <= 0) throw ArgumentError.value(quantity, 'quantity');
+      if (quantity <= 0 || quantity > maxFinancialInteger - uses) {
+        throw ArgumentError.value(quantity, 'quantity');
+      }
       uses += quantity;
+    }
+    if (referenceMinorUnits != null &&
+        BigInt.from(uses) * BigInt.from(referenceMinorUnits) >
+            BigInt.from(maxFinancialInteger)) {
+      throw ArgumentError('Financial values exceed supported precision');
     }
     return FinancialSummary(costMinorUnits, uses, referenceMinorUnits);
   }

@@ -11,6 +11,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          totalsProvider.overrideWith((ref) => Stream.value(<String, int>{})),
           subscriptionsProvider.overrideWith(
             (ref) => Stream.value(<Subscription>[]),
           ),

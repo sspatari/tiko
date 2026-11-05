@@ -1,4 +1,4 @@
-package com.tiko.tiko
+package com.tiko.app
 
 import io.flutter.embedding.android.FlutterActivity
 
