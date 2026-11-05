@@ -52,8 +52,8 @@ signing team. For Android install Android Studio/SDK and an emulator, accept SDK
 licenses with `flutter doctor --android-licenses`, then run `flutter run` with the
 emulator booted. `flutter doctor` diagnoses local setup problems.
 
-Both native identifiers are `com.tiko.app`. This is separate from older
-`com.tiko.tiko` installations: their data is not automatically moved. Export a
+Both iOS and Android use `com.sspatari.tiko`.
+These are separate from older `com.tiko.tiko` installations: their data is not automatically moved. Export a
 JSON backup from a compatible old installation before switching if needed.
 Flutter commands in a restricted agent session need approval for SDK/cache and
 simulator access. An SDK reinstall is not required.
