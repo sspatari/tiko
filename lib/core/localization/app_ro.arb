@@ -191,5 +191,36 @@
         "type": "String"
       }
     }
-  }
+  },
+  "activeStatus": "Activ",
+  "expiresSoonStatus": "Expiră în curând",
+  "upcomingStatus": "Începe în curând",
+  "expiredStatus": "Expirat",
+  "subscriptionDetailsSection": "Detaliile abonamentului",
+  "pricingSection": "Prețuri",
+  "validitySection": "Valabilitate",
+  "singleUsePriceHelp": "Opțional: prețul unei utilizări fără acest abonament, folosit pentru calcularea economiilor.",
+  "dateAndTimeSection": "Data și ora",
+  "usageDetailsSection": "Detaliile utilizării",
+  "customizeHome": "Personalizează ecranul principal",
+  "compactHome": "Carduri compacte",
+  "compactHomeDescription": "Carduri mai mici cu utilizări, cost pe utilizare și același buton +1 mare.",
+  "arrangeSubscriptions": "Abonamentele tale",
+  "arrangeSubscriptionsHelp": "Abonamentele fixate rămân primele. Trage pentru a reordona în fiecare grup sau folosește meniul rândului pentru a muta în sus ori în jos. Abonamentele arhivate rămân în secțiunea restrânsă.",
+  "noSubscriptionsToArrange": "Creează sau restaurează un abonament pentru a organiza ecranul principal.",
+  "resetHomeLayout": "Resetează aranjarea ecranului principal",
+  "dragToReorder": "Trage pentru a reordona",
+  "arrangeSubscriptionActions": "Organizează {name}",
+  "@arrangeSubscriptionActions": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pinSubscription": "Fixează sus",
+  "unpinSubscription": "Anulează fixarea",
+  "moveUp": "Mută în sus",
+  "moveDown": "Mută în jos",
+  "pinnedStatus": "Fixat"
 }

@@ -49,6 +49,7 @@ class _UsageEditorState extends ConsumerState<UsageEditor> {
     if (matches.isEmpty) return;
     final subscription = matches.first;
     if (widget.event == null && subscription.isArchived) return;
+    FocusScope.of(context).unfocus();
     setState(() {
       saving = true;
       error = null;
@@ -137,6 +138,7 @@ class _UsageEditorState extends ConsumerState<UsageEditor> {
   Widget build(BuildContext context) => PopScope(
     canPop: !saving,
     child: AlertDialog(
+      insetPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 24),
       title: Text(
         widget.event == null
             ? context.l10n.addForgottenUse
@@ -160,6 +162,8 @@ class _UsageEditorState extends ConsumerState<UsageEditor> {
                     key: form,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      spacing: 12,
                       children: [
                         if (items.isEmpty)
                           Text(
@@ -204,20 +208,34 @@ class _UsageEditorState extends ConsumerState<UsageEditor> {
                                 .l10n
                                 .restoreThisSubscriptionBeforeAddingUsage,
                           ),
+                        FormSectionHeading(
+                          icon: Icons.schedule,
+                          label: context.l10n.dateAndTimeSection,
+                        ),
                         ListTile(
                           contentPadding: EdgeInsets.zero,
+                          trailing: Icon(
+                            Icons.calendar_today_outlined,
+                            size: 20,
+                          ),
                           title: Text(context.l10n.date),
                           subtitle: Text(DateFormat.yMMMd().format(occurredAt)),
                           onTap: saving ? null : pickDate,
                         ),
                         ListTile(
                           contentPadding: EdgeInsets.zero,
+                          trailing: Icon(Icons.access_time, size: 20),
                           title: Text(context.l10n.time),
                           subtitle: Text(DateFormat.Hm().format(occurredAt)),
                           onTap: saving ? null : pickTime,
                         ),
+                        FormSectionHeading(
+                          icon: Icons.notes_outlined,
+                          label: context.l10n.usageDetailsSection,
+                        ),
                         TextFormField(
                           controller: quantity,
+                          textInputAction: TextInputAction.next,
                           enabled: !saving,
                           decoration: InputDecoration(
                             labelText: context.l10n.quantity,
@@ -234,6 +252,7 @@ class _UsageEditorState extends ConsumerState<UsageEditor> {
                         ),
                         TextFormField(
                           controller: note,
+                          textCapitalization: TextCapitalization.sentences,
                           enabled: !saving,
                           decoration: InputDecoration(
                             labelText: context.l10n.noteOptional,

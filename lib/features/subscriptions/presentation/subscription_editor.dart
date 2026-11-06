@@ -76,6 +76,7 @@ class _CreateState extends ConsumerState<CreateCounter> {
 
   Future<void> save() async {
     if (!form.currentState!.validate() || saving) return;
+    FocusScope.of(context).unfocus();
     setState(() {
       saving = true;
       error = null;
@@ -132,6 +133,7 @@ class _CreateState extends ConsumerState<CreateCounter> {
   Widget build(BuildContext context) => PopScope(
     canPop: !saving,
     child: AlertDialog(
+      insetPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 24),
       title: Text(
         widget.renew
             ? context.l10n.renewSubscription
@@ -146,7 +148,13 @@ class _CreateState extends ConsumerState<CreateCounter> {
             key: form,
             child: Column(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              spacing: 12,
               children: [
+                FormSectionHeading(
+                  icon: Icons.notes_outlined,
+                  label: context.l10n.subscriptionDetailsSection,
+                ),
                 if (widget.subscription == null) ...[
                   DropdownButtonFormField<String>(
                     initialValue: template,
@@ -198,6 +206,8 @@ class _CreateState extends ConsumerState<CreateCounter> {
                 ],
                 TextFormField(
                   controller: name,
+                  textCapitalization: TextCapitalization.sentences,
+                  textInputAction: TextInputAction.next,
                   decoration: InputDecoration(labelText: context.l10n.name),
                   validator: (v) => v == null || v.trim().isEmpty
                       ? context.l10n.enterAName
@@ -205,13 +215,120 @@ class _CreateState extends ConsumerState<CreateCounter> {
                 ),
                 TextFormField(
                   controller: description,
+                  textCapitalization: TextCapitalization.sentences,
+                  minLines: 1,
+                  maxLines: 3,
                   decoration: InputDecoration(
                     labelText: context.l10n.descriptionOptional,
                   ),
                 ),
                 TextFormField(
                   controller: category,
+                  textCapitalization: TextCapitalization.words,
+                  textInputAction: TextInputAction.next,
                   decoration: InputDecoration(labelText: context.l10n.category),
+                ),
+                FormSectionHeading(
+                  icon: Icons.payments_outlined,
+                  label: context.l10n.pricingSection,
+                ),
+                TextFormField(
+                  controller: cost,
+                  textInputAction: TextInputAction.next,
+                  decoration: InputDecoration(
+                    labelText: context.l10n.totalPrice,
+                  ),
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  validator: (v) => minor(v ?? '') == null
+                      ? context.l10n.enterAValidPrice
+                      : null,
+                ),
+                DropdownButtonFormField<String>(
+                  key: ValueKey('currency:$currency'),
+                  initialValue: currency,
+                  decoration: InputDecoration(labelText: context.l10n.currency),
+                  items:
+                      {
+                            currency,
+                            'MDL',
+                            'EUR',
+                            'USD',
+                            'RON',
+                            'GBP',
+                            'JPY',
+                            'KWD',
+                          }
+                          .toList()
+                          .map(
+                            (c) => DropdownMenuItem(value: c, child: Text(c)),
+                          )
+                          .toList(),
+                  onChanged: (v) => setState(() => currency = v!),
+                ),
+                TextFormField(
+                  controller: reference,
+                  decoration: InputDecoration(
+                    labelText: context.l10n.singleUsePriceOptional,
+                    helperText: context.l10n.singleUsePriceHelp,
+                  ),
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  validator: (v) =>
+                      v == null || v.trim().isEmpty || (minor(v) ?? 0) > 0
+                      ? null
+                      : context.l10n.enterAPositivePrice,
+                ),
+                FormSectionHeading(
+                  icon: Icons.date_range_outlined,
+                  label: context.l10n.validitySection,
+                ),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  trailing: Icon(Icons.calendar_today_outlined, size: 20),
+                  title: Text(context.l10n.startDate),
+                  subtitle: Text(DateFormat.yMMMd().format(start)),
+                  onTap: () async {
+                    final date = await showDatePicker(
+                      context: context,
+                      initialDate: start,
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime(2100),
+                    );
+                    if (date != null && mounted) {
+                      setState(() {
+                        start = date;
+                        if (end != null && end!.isBefore(start)) end = null;
+                      });
+                    }
+                  },
+                ),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(context.l10n.endDateOptional),
+                  trailing: end == null
+                      ? Icon(Icons.calendar_today_outlined, size: 20)
+                      : IconButton(
+                          tooltip: context.l10n.clearEndDate,
+                          icon: Icon(Icons.clear),
+                          onPressed: () => setState(() => end = null),
+                        ),
+                  subtitle: Text(
+                    end == null
+                        ? context.l10n.noExpiration
+                        : DateFormat.yMMMd().format(end!),
+                  ),
+                  onTap: () async {
+                    final date = await showDatePicker(
+                      context: context,
+                      initialDate: end ?? start,
+                      firstDate: start,
+                      lastDate: DateTime(2100),
+                    );
+                    if (date != null && mounted) setState(() => end = date);
+                  },
+                ),
+                FormSectionHeading(
+                  icon: Icons.palette_outlined,
+                  label: context.l10n.appearance,
                 ),
                 DropdownButtonFormField<String>(
                   key: ValueKey('icon:$icon'),
@@ -279,92 +396,16 @@ class _CreateState extends ConsumerState<CreateCounter> {
                           .toList(),
                   onChanged: (value) => setState(() => color = value!),
                 ),
-                TextFormField(
-                  controller: cost,
-                  decoration: InputDecoration(
-                    labelText: context.l10n.totalPrice,
+                if (error != null)
+                  Semantics(
+                    liveRegion: true,
+                    child: Text(
+                      error!,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                    ),
                   ),
-                  keyboardType: TextInputType.numberWithOptions(decimal: true),
-                  validator: (v) => minor(v ?? '') == null
-                      ? context.l10n.enterAValidPrice
-                      : null,
-                ),
-                DropdownButtonFormField<String>(
-                  key: ValueKey('currency:$currency'),
-                  initialValue: currency,
-                  decoration: InputDecoration(labelText: context.l10n.currency),
-                  items:
-                      {
-                            currency,
-                            'MDL',
-                            'EUR',
-                            'USD',
-                            'RON',
-                            'GBP',
-                            'JPY',
-                            'KWD',
-                          }
-                          .toList()
-                          .map(
-                            (c) => DropdownMenuItem(value: c, child: Text(c)),
-                          )
-                          .toList(),
-                  onChanged: (v) => setState(() => currency = v!),
-                ),
-                TextFormField(
-                  controller: reference,
-                  decoration: InputDecoration(
-                    labelText: context.l10n.singleUsePriceOptional,
-                  ),
-                  keyboardType: TextInputType.numberWithOptions(decimal: true),
-                  validator: (v) =>
-                      v == null || v.trim().isEmpty || (minor(v) ?? 0) > 0
-                      ? null
-                      : context.l10n.enterAPositivePrice,
-                ),
-                ListTile(
-                  title: Text(context.l10n.startDate),
-                  subtitle: Text(DateFormat.yMMMd().format(start)),
-                  onTap: () async {
-                    final date = await showDatePicker(
-                      context: context,
-                      initialDate: start,
-                      firstDate: DateTime(2000),
-                      lastDate: DateTime(2100),
-                    );
-                    if (date != null && mounted) {
-                      setState(() {
-                        start = date;
-                        if (end != null && end!.isBefore(start)) end = null;
-                      });
-                    }
-                  },
-                ),
-                ListTile(
-                  title: Text(context.l10n.endDateOptional),
-                  trailing: end == null
-                      ? null
-                      : IconButton(
-                          tooltip: context.l10n.clearEndDate,
-                          icon: Icon(Icons.clear),
-                          onPressed: () => setState(() => end = null),
-                        ),
-                  subtitle: Text(
-                    end == null
-                        ? context.l10n.noExpiration
-                        : DateFormat.yMMMd().format(end!),
-                  ),
-                  onTap: () async {
-                    final date = await showDatePicker(
-                      context: context,
-                      initialDate: end ?? start,
-                      firstDate: start,
-                      lastDate: DateTime(2100),
-                    );
-                    if (date != null && mounted) setState(() => end = date);
-                  },
-                ),
-                if (error != null) Text(error!),
               ],
             ),
           ),

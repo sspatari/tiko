@@ -9,7 +9,8 @@ Android. There is no account, backend, telemetry, or production seed data.
 
 - Create and edit unlimited subscriptions, including optional trolleybus/gym
   templates, categories, icons, colors, prices, currencies and validity dates.
-- Home prioritizes active periods, with archived subscriptions collapsed. Large
+- Home supports pinned subscriptions, saved ordering and optional compact cards
+  through Customize Home. Archived subscriptions remain collapsed. Large
   +1 controls record UTC timestamps; rapid taps are suppressed and five-second
   Undo deletes the exact event. Uses outside validity require confirmation.
 - Subscription details show usage, average cost, equivalent individual cost,
@@ -160,3 +161,40 @@ and app-update receivers restore scheduled reminders. Time-zone and system-langu
 changes refresh on app resume; reopen Tiko after travel to refresh local times.
 Notifications are localized in English/Romanian. OS delivery, permission prompts,
 reboot recovery and tap routing still need physical-device validation.
+
+## Home layout
+
+Use the **Customize Home** button in the Home toolbar to pin subscriptions,
+reorder within pinned/unpinned groups, and enable compact cards. The row menus
+also provide Move up/Move down for accessibility. Save applies changes; going
+back discards the draft. Reset Home layout restores full cards and the default
+validity/alphabetical order when saved.
+
+Pinned subscriptions appear first; explicit order takes priority over validity
+sorting. New subscriptions follow existing arranged cards. Archived subscriptions
+stay collapsed and retain their layout preferences for restoration. Deleted or
+missing IDs are ignored and cleaned up the next time the layout is saved.
+Layout preferences use the existing app_settings table and are included in JSON
+backups. Old backups default to full cards without pins or manual ordering.
+
+## Isolated device UI review
+
+The device harness uses an in-memory database with synthetic subscriptions; it
+never opens the production database or requests notification permission. Running
+it replaces the installed app binary temporarily. Restore the normal app after
+review, preserving the existing app's data:
+
+On iPhone, build the profile test app explicitly and use its actual Xcode output
+path; this also avoids the debug-launch and bundle-discovery issues seen locally:
+
+```sh
+flutter build ios --profile --target=integration_test/phone_polish_test.dart
+flutter drive --profile --use-application-binary=build/ios/Profile-iphoneos/Runner.app --driver=test_driver/integration_test.dart --target=integration_test/phone_polish_test.dart -d <device-id>
+flutter run --release -t lib/main.dart -d <device-id>
+```
+
+The driver writes screenshots/results to the host's temporary directory under
+`tiko-phone-review` (override with `TIKO_SCREENSHOT_DIR`), not the repository.
+The checks cover usage/Undo, saved Home layout, dark mode, Romanian, 2x text and
+editing with a keyboard. They do not prove native notification delivery or a
+complete VoiceOver/TalkBack review.

@@ -634,4 +634,82 @@ class AppLocalizationsEn extends AppLocalizations {
   String expiresSoonReminder(String name) {
     return '$name expires in 3 days.';
   }
+
+  @override
+  String get activeStatus => 'Active';
+
+  @override
+  String get expiresSoonStatus => 'Expires soon';
+
+  @override
+  String get upcomingStatus => 'Upcoming';
+
+  @override
+  String get expiredStatus => 'Expired';
+
+  @override
+  String get subscriptionDetailsSection => 'Subscription details';
+
+  @override
+  String get pricingSection => 'Pricing';
+
+  @override
+  String get validitySection => 'Validity';
+
+  @override
+  String get singleUsePriceHelp =>
+      'Optional: the price of one use without this subscription, used to calculate savings.';
+
+  @override
+  String get dateAndTimeSection => 'Date & time';
+
+  @override
+  String get usageDetailsSection => 'Usage details';
+
+  @override
+  String get customizeHome => 'Customize Home';
+
+  @override
+  String get compactHome => 'Compact cards';
+
+  @override
+  String get compactHomeDescription =>
+      'Smaller cards with usage, cost per use and the same large +1 button.';
+
+  @override
+  String get arrangeSubscriptions => 'Your subscriptions';
+
+  @override
+  String get arrangeSubscriptionsHelp =>
+      'Pinned subscriptions stay first. Drag to reorder within each group, or use the row menu to move up or down. Archived subscriptions stay in their collapsed section.';
+
+  @override
+  String get noSubscriptionsToArrange =>
+      'Create or restore a subscription to arrange your Home screen.';
+
+  @override
+  String get resetHomeLayout => 'Reset Home layout';
+
+  @override
+  String get dragToReorder => 'Drag to reorder';
+
+  @override
+  String arrangeSubscriptionActions(String name) {
+    return 'Arrange $name';
+  }
+
+  @override
+  String get pinSubscription => 'Pin to top';
+
+  @override
+  String get unpinSubscription => 'Unpin';
+
+  @override
+  String get moveUp => 'Move up';
+
+  @override
+  String get moveDown => 'Move down';
+
+  @override
+  String get pinnedStatus => 'Pinned';
 }

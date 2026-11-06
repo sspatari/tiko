@@ -1166,6 +1166,150 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{name} expires in 3 days.'**
   String expiresSoonReminder(String name);
+
+  /// No description provided for @activeStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get activeStatus;
+
+  /// No description provided for @expiresSoonStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Expires soon'**
+  String get expiresSoonStatus;
+
+  /// No description provided for @upcomingStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming'**
+  String get upcomingStatus;
+
+  /// No description provided for @expiredStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get expiredStatus;
+
+  /// No description provided for @subscriptionDetailsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription details'**
+  String get subscriptionDetailsSection;
+
+  /// No description provided for @pricingSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Pricing'**
+  String get pricingSection;
+
+  /// No description provided for @validitySection.
+  ///
+  /// In en, this message translates to:
+  /// **'Validity'**
+  String get validitySection;
+
+  /// No description provided for @singleUsePriceHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional: the price of one use without this subscription, used to calculate savings.'**
+  String get singleUsePriceHelp;
+
+  /// No description provided for @dateAndTimeSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Date & time'**
+  String get dateAndTimeSection;
+
+  /// No description provided for @usageDetailsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Usage details'**
+  String get usageDetailsSection;
+
+  /// No description provided for @customizeHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Customize Home'**
+  String get customizeHome;
+
+  /// No description provided for @compactHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Compact cards'**
+  String get compactHome;
+
+  /// No description provided for @compactHomeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Smaller cards with usage, cost per use and the same large +1 button.'**
+  String get compactHomeDescription;
+
+  /// No description provided for @arrangeSubscriptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Your subscriptions'**
+  String get arrangeSubscriptions;
+
+  /// No description provided for @arrangeSubscriptionsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Pinned subscriptions stay first. Drag to reorder within each group, or use the row menu to move up or down. Archived subscriptions stay in their collapsed section.'**
+  String get arrangeSubscriptionsHelp;
+
+  /// No description provided for @noSubscriptionsToArrange.
+  ///
+  /// In en, this message translates to:
+  /// **'Create or restore a subscription to arrange your Home screen.'**
+  String get noSubscriptionsToArrange;
+
+  /// No description provided for @resetHomeLayout.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Home layout'**
+  String get resetHomeLayout;
+
+  /// No description provided for @dragToReorder.
+  ///
+  /// In en, this message translates to:
+  /// **'Drag to reorder'**
+  String get dragToReorder;
+
+  /// No description provided for @arrangeSubscriptionActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrange {name}'**
+  String arrangeSubscriptionActions(String name);
+
+  /// No description provided for @pinSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'Pin to top'**
+  String get pinSubscription;
+
+  /// No description provided for @unpinSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'Unpin'**
+  String get unpinSubscription;
+
+  /// No description provided for @moveUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Move up'**
+  String get moveUp;
+
+  /// No description provided for @moveDown.
+  ///
+  /// In en, this message translates to:
+  /// **'Move down'**
+  String get moveDown;
+
+  /// No description provided for @pinnedStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Pinned'**
+  String get pinnedStatus;
 }
 
 class _AppLocalizationsDelegate

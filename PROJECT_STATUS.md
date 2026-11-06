@@ -1,5 +1,60 @@
 # Tiko project status
 
+## Home customization and phone polish
+- Added Customize Home in the Home toolbar: pin subscriptions, reorder within
+  pinned/unpinned groups using drag handles or accessible Move up/Move down menus,
+  and choose compact cards. Save applies the draft; Back discards it; Reset only
+  affects Home layout. Archived subscriptions remain collapsed and retain their
+  pin/order preferences for restoration.
+- Layout persists in the existing app_settings table and JSON backups, with no
+  schema migration. Old backups default to full cards/default order. Unknown IDs
+  are ignored and pruned on layout save. Explicit order overrides validity order;
+  new unarranged subscriptions follow arranged subscriptions.
+- Compact cards preserve status/dates, counts, average cost when available and
+  the same full-size +1 control. They omit secondary metrics/links and redundant
+  empty-usage text. Home scrolls to the top after a saved layout change. Compact
+  mode/large text use an icon-only Create FAB with a localized tooltip. Subscription
+  icons adapt to light/dark contrast without modifying stored colors.
+- Added an integration_test harness using only in-memory synthetic records, with
+  screenshots/results in the host temporary directory. It never opens production
+  data or requests notification permission. README documents running the harness
+  and restoring the normal app afterwards. Signed iPhone release build passes.
+- Formatting, flutter analyze and all 58 unit/widget tests pass, including saved
+  layouts across DB reopening, backup compatibility, ordering/pin boundaries,
+  accessible reordering, compact +1/Undo, reset and draft cancellation. Whitespace
+  checks pass. Physical iPhone runs verified usage/Undo, saved pin/order/compact
+  layout, light/dark rendering, Romanian and 2x text using isolated data. Screenshots
+  were reviewed and informed the contrast, compact-copy and Create-button fixes.
+  Full form/keyboard verification remains incomplete: debug launching was unreliable
+  and the profile harness hit text-input/keyboard simulation limitations. Further
+  testing stopped at the user's request. Normal signed release build succeeded;
+  the latest normal app was installed and launched after the temporary test installation. Native
+  notification delivery and full VoiceOver/TalkBack checks remain unverified.
+
+## Remaining premium UI refinements
+- Home and subscription details show icon/text badges for Active, Expires soon,
+  Upcoming, Expired and Archived. The expiry warning includes the final three
+  calendar days and expiry day; exact dates remain visible. Pure domain logic
+  handles calendar boundaries, and a disposable Riverpod midnight timer plus
+  resume invalidation refreshes dates without requiring a new usage event.
+- Usage totals fade briefly when persisted totals change, with screen-reader
+  live announcements; break-even progress animates smoothly. Both respect the
+  system reduced-motion setting. Numeric totals/financial values use tabular
+  figures, and average cost appears before date metadata on details.
+- Subscription forms now group details, pricing, validity and appearance, with
+  consistent spacing, clearer date affordances, reference-price help, focused
+  field borders and multiline errors. Usage forms group date/time and usage
+  details. Save actions remain outside scrolling content, and saving dismisses
+  the keyboard. New copy is localized in English and Romanian.
+- Verification: dart format lib test, flutter analyze, all 53 tests and git diff
+  --check pass. New tests cover expiry boundaries/precedence, month/leap/DST
+  boundaries and ordinary/reduced-motion feedback. Existing large-text,
+  persistence, form editing and Undo tests pass. No simulator/phone visual
+  validation or new native builds were performed for these Dart-only changes.
+- Next useful step: review badges and form scrolling on a phone in both themes,
+  Romanian, large text, reduced motion and with the keyboard open. The previously
+  documented real-notification delivery checks remain outstanding.
+
 ## Action and card visual refinements
 - Permanent subscription/event deletion now uses theme error colors in menus,
   detail-page trash buttons and confirmation buttons. Cancel stays neutral;

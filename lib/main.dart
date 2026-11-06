@@ -1,4 +1,8 @@
 import 'dart:convert';
+import 'features/settings/data/home_layout.dart';
+import 'features/home/domain/home_order.dart';
+import 'dart:async';
+import 'features/subscriptions/domain/subscription_lifecycle.dart';
 import 'dart:io';
 import 'features/reminders/expiry_reminders.dart';
 import 'package:drift/drift.dart' show Value;
@@ -23,6 +27,7 @@ import 'features/usage/domain/usage_dates.dart';
 import 'features/subscriptions/domain/financial_calculator.dart';
 
 part 'app/design.dart';
+part 'features/home/presentation/home_customization.dart';
 part 'features/analytics/presentation/analytics_screen.dart';
 part 'features/settings/presentation/settings_screen.dart';
 part 'features/backup/presentation/backup_actions.dart';
@@ -31,6 +36,13 @@ part 'features/subscriptions/presentation/subscription_editor.dart';
 part 'features/usage/presentation/record_usage_button.dart';
 part 'features/usage/presentation/usage_history.dart';
 part 'features/usage/presentation/usage_editor.dart';
+
+final currentLocalDateProvider = Provider<DateTime>((ref) {
+  final now = DateTime.now();
+  final timer = Timer(nextLocalDay(now).difference(now), ref.invalidateSelf);
+  ref.onDispose(timer.cancel);
+  return now;
+});
 
 final databaseProvider = Provider((ref) {
   final database = TikoDatabase();
@@ -101,6 +113,7 @@ final router = GoRouter(
         ),
       ],
     ),
+    GoRoute(path: '/home-layout', builder: (_, _) => HomeCustomizationScreen()),
     GoRoute(
       path: '/subscriptions/:id',
       builder: (_, state) =>
@@ -125,7 +138,12 @@ final reminderSyncProvider = FutureProvider<void>((ref) async {
   ref.watch(reminderRefreshProvider);
   final service = ref.watch(expiryReminderServiceProvider);
   if (service == null) return;
-  final preferences = ref.watch(preferencesProvider);
+  final preferences = ref.watch(
+    preferencesProvider.select(
+      (value) =>
+          (language: value.language, expiryReminders: value.expiryReminders),
+    ),
+  );
   final subscriptions = ref.watch(subscriptionsProvider);
   if (!subscriptions.hasValue) return;
   final language = preferences.language == 'system'
@@ -199,12 +217,41 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeState extends ConsumerState<HomeScreen> {
+  final scroll = ScrollController();
+  @override
+  void dispose() {
+    scroll.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final today = ref.watch(currentLocalDateProvider);
+    final layout = ref.watch(preferencesProvider).homeLayout;
+    ref.listen(preferencesProvider.select((value) => value.homeLayout), (
+      previous,
+      next,
+    ) {
+      if (previous == next) return;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && scroll.hasClients) scroll.jumpTo(0);
+      });
+    });
+    void createCounter() =>
+        showDialog<void>(context: context, builder: (_) => CreateCounter());
+    final smallCreateButton =
+        layout.compact || MediaQuery.textScalerOf(context).scale(14) > 18;
     final subscriptions = ref.watch(subscriptionsProvider);
     final events = ref.watch(totalsProvider);
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          IconButton(
+            tooltip: context.l10n.customizeHome,
+            icon: Icon(Icons.dashboard_customize_outlined),
+            onPressed: () => context.push('/home-layout'),
+          ),
+        ],
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -213,12 +260,17 @@ class _HomeState extends ConsumerState<HomeScreen> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () =>
-            showDialog<void>(context: context, builder: (_) => CreateCounter()),
-        icon: Icon(Icons.add),
-        label: Text(context.l10n.createCounter),
-      ),
+      floatingActionButton: smallCreateButton
+          ? FloatingActionButton(
+              onPressed: createCounter,
+              tooltip: context.l10n.createCounter,
+              child: Icon(Icons.add),
+            )
+          : FloatingActionButton.extended(
+              onPressed: createCounter,
+              icon: Icon(Icons.add),
+              label: Text(context.l10n.createCounter),
+            ),
       body: subscriptions.when(
         error: (_, _) => Center(child: Text(context.l10n.couldNotLoadCounters)),
         loading: () => BrandLoading(),
@@ -255,14 +307,12 @@ class _HomeState extends ConsumerState<HomeScreen> {
                 ),
               );
             }
-            final sorted = [...items]
-              ..sort((a, b) {
-                final order = subscriptionOrder(
-                  a,
-                ).compareTo(subscriptionOrder(b));
-                return order == 0 ? a.name.compareTo(b.name) : order;
-              });
+            final sorted = arrangeHomeSubscriptions(items, layout, today);
             Widget buildCard(Subscription subscription) {
+              final iconColor = subscriptionDisplayColor(
+                context,
+                subscription.color,
+              );
               final total = usage[subscription.id] ?? 0;
               final result = FinancialCalculator().calculate(
                 costMinorUnits: subscription.totalCostMinorUnits,
@@ -272,8 +322,9 @@ class _HomeState extends ConsumerState<HomeScreen> {
               String money(int value) =>
                   Money.format(value, subscription.currencyCode);
               return Card(
+                key: ValueKey(subscription.id),
                 child: Padding(
-                  padding: EdgeInsets.all(20),
+                  padding: EdgeInsets.all(layout.compact ? 16 : 20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -282,59 +333,80 @@ class _HomeState extends ConsumerState<HomeScreen> {
                         leading: Container(
                           padding: EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: subscriptionColor(
-                              subscription.color,
-                            ).withValues(alpha: .12),
+                            color: iconColor.withValues(alpha: .12),
                             borderRadius: BorderRadius.circular(16),
                           ),
                           child: Icon(
                             subscriptionIcon(subscription.icon),
-                            color: subscriptionColor(subscription.color),
+                            color: iconColor,
                           ),
                         ),
                         title: Text(
                           subscription.name,
-                          style: Theme.of(context).textTheme.titleLarge,
+                          style: layout.compact
+                              ? Theme.of(context).textTheme.titleMedium
+                              : Theme.of(context).textTheme.titleLarge,
                         ),
-                        subtitle: Text(
-                          subscriptionStatus(context, subscription),
+                        subtitle: Padding(
+                          padding: EdgeInsets.only(top: 8),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SubscriptionStatusBadge(
+                                subscription: subscription,
+                              ),
+                              SizedBox(height: 6),
+                              Text(subscriptionStatus(context, subscription)),
+                            ],
+                          ),
                         ),
-                        trailing: Icon(Icons.chevron_right),
+                        trailing:
+                            layout.pinnedIds.contains(subscription.id) &&
+                                !subscription.isArchived
+                            ? Tooltip(
+                                message: context.l10n.pinnedStatus,
+                                child: Icon(Icons.push_pin, size: 20),
+                              )
+                            : Icon(Icons.chevron_right),
                         onTap: () =>
                             context.push('/subscriptions/${subscription.id}'),
                       ),
                       SizedBox(height: 16),
-                      Text(
-                        context.l10n.uses(result.uses),
-                        style: Theme.of(context).textTheme.displaySmall,
+                      AnimatedUsageTotal(
+                        uses: result.uses,
+                        style: layout.compact
+                            ? Theme.of(context).textTheme.titleLarge
+                            : null,
                       ),
-                      Text(
-                        result.averageMinorUnits == null
-                            ? context.l10n.noUsesRecordedYet
-                            : context.l10n.costPerUse(
-                                money(result.averageMinorUnits!),
+                      if (!layout.compact || result.averageMinorUnits != null)
+                        Text(
+                          result.averageMinorUnits == null
+                              ? context.l10n.noUsesRecordedYet
+                              : context.l10n.costPerUse(
+                                  money(result.averageMinorUnits!),
+                                ),
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
                               ),
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.onSurfaceVariant,
-                            ),
-                      ),
-                      SizedBox(height: 6),
-                      Text(
-                        context.l10n.prepaid(money(result.cost)),
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
-                      ),
-                      if (result.breakEvenUses != null) ...[
+                      if (!layout.compact) ...[
+                        SizedBox(height: 6),
+                        Text(
+                          context.l10n.prepaid(money(result.cost)),
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                              ),
+                        ),
+                      ],
+                      if (!layout.compact && result.breakEvenUses != null) ...[
                         SizedBox(height: 16),
-                        LinearProgressIndicator(
-                          minHeight: 6,
-                          borderRadius: BorderRadius.circular(3),
-                          value: result.progress?.clamp(0, 1) ?? 0,
-                        ),
+                        UsageProgress(value: result.progress ?? 0),
                         SizedBox(height: 8),
                         Text(
                           context.l10n.remainingUses(result.remainingUses!),
@@ -348,16 +420,17 @@ class _HomeState extends ConsumerState<HomeScreen> {
                       ],
                       SizedBox(height: 20),
                       RecordUsageButton(subscription: subscription),
-                      TextButton(
-                        style: TextButton.styleFrom(
-                          foregroundColor: Theme.of(
-                            context,
-                          ).colorScheme.onSurfaceVariant,
+                      if (!layout.compact)
+                        TextButton(
+                          style: TextButton.styleFrom(
+                            foregroundColor: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                          ),
+                          onPressed: () =>
+                              context.push('/subscriptions/${subscription.id}'),
+                          child: Text(context.l10n.detailsHistory),
                         ),
-                        onPressed: () =>
-                            context.push('/subscriptions/${subscription.id}'),
-                        child: Text(context.l10n.detailsHistory),
-                      ),
                     ],
                   ),
                 ),
@@ -367,6 +440,7 @@ class _HomeState extends ConsumerState<HomeScreen> {
             final visible = sorted.where((s) => !s.isArchived).toList();
             final archived = sorted.where((s) => s.isArchived).toList();
             return ListView.builder(
+              controller: scroll,
               padding: EdgeInsets.fromLTRB(16, 16, 16, 100),
               itemCount: visible.length + (archived.isEmpty ? 0 : 1),
               itemBuilder: (context, index) => index < visible.length

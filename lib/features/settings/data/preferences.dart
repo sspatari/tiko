@@ -1,4 +1,6 @@
+import 'dart:convert';
 import '../../../core/database/database.dart';
+import 'home_layout.dart';
 
 class AppPreferences {
   const AppPreferences({
@@ -6,27 +8,32 @@ class AppPreferences {
     this.language = 'system',
     this.haptics = true,
     this.expiryReminders = false,
+    this.homeLayout = const HomeLayout(),
   });
   final String theme;
   final String language;
   final bool haptics;
   final bool expiryReminders;
+  final HomeLayout homeLayout;
   AppPreferences copyWith({
     String? theme,
     String? language,
     bool? haptics,
     bool? expiryReminders,
+    HomeLayout? homeLayout,
   }) => AppPreferences(
     theme: theme ?? this.theme,
     language: language ?? this.language,
     haptics: haptics ?? this.haptics,
     expiryReminders: expiryReminders ?? this.expiryReminders,
+    homeLayout: homeLayout ?? this.homeLayout,
   );
   Map<String, Object> toJson() => {
     'theme': theme,
     'language': language,
     'haptics': haptics,
     'expiryReminders': expiryReminders,
+    'homeLayout': homeLayout.toJson(),
   };
   factory AppPreferences.fromJson(Map<String, dynamic> data) {
     if (!['system', 'light', 'dark'].contains(data['theme']) ||
@@ -36,11 +43,18 @@ class AppPreferences {
             data['expiryReminders'] is! bool)) {
       throw const FormatException('Invalid preferences');
     }
+    if (data.containsKey('homeLayout') &&
+        data['homeLayout'] is! Map<String, dynamic>) {
+      throw const FormatException('Invalid Home layout');
+    }
     return AppPreferences(
       theme: data['theme'] as String,
       language: data['language'] as String,
       haptics: data['haptics'] as bool,
       expiryReminders: data['expiryReminders'] as bool? ?? false,
+      homeLayout: HomeLayout.fromJson(
+        data['homeLayout'] as Map<String, dynamic>? ?? {},
+      ),
     );
   }
 }
@@ -56,6 +70,7 @@ class PreferencesRepository {
       'language': values['language'] ?? 'system',
       'haptics': values['haptics'] != 'false',
       'expiryReminders': values['expiryReminders'] == 'true',
+      'homeLayout': jsonDecode(values['homeLayout'] ?? '{}'),
     });
   }
 
@@ -67,7 +82,9 @@ class PreferencesRepository {
               .insertOnConflictUpdate(
                 AppSettingsCompanion.insert(
                   key: entry.key,
-                  value: entry.value.toString(),
+                  value: entry.key == 'homeLayout'
+                      ? jsonEncode(entry.value)
+                      : entry.value.toString(),
                 ),
               );
         }

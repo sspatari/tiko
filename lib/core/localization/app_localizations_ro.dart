@@ -641,4 +641,82 @@ class AppLocalizationsRo extends AppLocalizations {
   String expiresSoonReminder(String name) {
     return '$name expiră peste 3 zile.';
   }
+
+  @override
+  String get activeStatus => 'Activ';
+
+  @override
+  String get expiresSoonStatus => 'Expiră în curând';
+
+  @override
+  String get upcomingStatus => 'Începe în curând';
+
+  @override
+  String get expiredStatus => 'Expirat';
+
+  @override
+  String get subscriptionDetailsSection => 'Detaliile abonamentului';
+
+  @override
+  String get pricingSection => 'Prețuri';
+
+  @override
+  String get validitySection => 'Valabilitate';
+
+  @override
+  String get singleUsePriceHelp =>
+      'Opțional: prețul unei utilizări fără acest abonament, folosit pentru calcularea economiilor.';
+
+  @override
+  String get dateAndTimeSection => 'Data și ora';
+
+  @override
+  String get usageDetailsSection => 'Detaliile utilizării';
+
+  @override
+  String get customizeHome => 'Personalizează ecranul principal';
+
+  @override
+  String get compactHome => 'Carduri compacte';
+
+  @override
+  String get compactHomeDescription =>
+      'Carduri mai mici cu utilizări, cost pe utilizare și același buton +1 mare.';
+
+  @override
+  String get arrangeSubscriptions => 'Abonamentele tale';
+
+  @override
+  String get arrangeSubscriptionsHelp =>
+      'Abonamentele fixate rămân primele. Trage pentru a reordona în fiecare grup sau folosește meniul rândului pentru a muta în sus ori în jos. Abonamentele arhivate rămân în secțiunea restrânsă.';
+
+  @override
+  String get noSubscriptionsToArrange =>
+      'Creează sau restaurează un abonament pentru a organiza ecranul principal.';
+
+  @override
+  String get resetHomeLayout => 'Resetează aranjarea ecranului principal';
+
+  @override
+  String get dragToReorder => 'Trage pentru a reordona';
+
+  @override
+  String arrangeSubscriptionActions(String name) {
+    return 'Organizează $name';
+  }
+
+  @override
+  String get pinSubscription => 'Fixează sus';
+
+  @override
+  String get unpinSubscription => 'Anulează fixarea';
+
+  @override
+  String get moveUp => 'Mută în sus';
+
+  @override
+  String get moveDown => 'Mută în jos';
+
+  @override
+  String get pinnedStatus => 'Fixat';
 }

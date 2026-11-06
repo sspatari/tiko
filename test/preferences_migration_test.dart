@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:tiko/features/settings/data/home_layout.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tiko/core/database/database.dart';
@@ -52,6 +53,11 @@ void main() {
           language: 'ro',
           haptics: false,
           expiryReminders: true,
+          homeLayout: HomeLayout(
+            compact: true,
+            pinnedIds: ['pass'],
+            order: ['pass'],
+          ),
         ),
       );
       await database.close();
@@ -61,6 +67,9 @@ void main() {
       expect(preferences.language, 'ro');
       expect(preferences.haptics, isFalse);
       expect(preferences.expiryReminders, isTrue);
+      expect(preferences.homeLayout.compact, isTrue);
+      expect(preferences.homeLayout.pinnedIds, ['pass']);
+      expect(preferences.homeLayout.order, ['pass']);
       await database.close();
     },
   );

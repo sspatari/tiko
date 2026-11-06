@@ -12,17 +12,24 @@ IconData subscriptionIcon(String icon) => switch (icon) {
 Color subscriptionColor(String color) =>
     Color(int.tryParse('ff$color', radix: 16) ?? 0xff006B5E);
 
-int subscriptionOrder(Subscription subscription) {
-  if (subscription.isArchived) return 3;
-  final today = DateUtils.dateOnly(DateTime.now());
-  final start = subscription.startDate;
-  final end = subscription.endDate;
-  if (DateTime(start.year, start.month, start.day).isAfter(today)) return 1;
-  if (end != null && DateTime(end.year, end.month, end.day).isBefore(today)) {
-    return 2;
-  }
-  return 0;
-}
+Color subscriptionDisplayColor(BuildContext context, String color) =>
+    ColorScheme.fromSeed(
+      seedColor: subscriptionColor(color),
+      brightness: Theme.of(context).brightness,
+    ).primary;
+
+int subscriptionOrder(Subscription subscription) =>
+    switch (subscriptionLifecycle(
+      startDate: subscription.startDate,
+      endDate: subscription.endDate,
+      archived: subscription.isArchived,
+      today: DateTime.now(),
+    )) {
+      SubscriptionLifecycle.active || SubscriptionLifecycle.expiringSoon => 0,
+      SubscriptionLifecycle.upcoming => 1,
+      SubscriptionLifecycle.expired => 2,
+      SubscriptionLifecycle.archived => 3,
+    };
 
 String subscriptionStatus(BuildContext context, Subscription subscription) {
   if (subscription.isArchived) return context.l10n.archived;
@@ -286,13 +293,27 @@ class _SubscriptionDetailState extends ConsumerState<SubscriptionDetail> {
                           Icon(
                             subscriptionIcon(subscription.icon),
                             size: 40,
-                            color: subscriptionColor(subscription.color),
+                            color: subscriptionDisplayColor(
+                              context,
+                              subscription.color,
+                            ),
                           ),
                           SizedBox(width: 16),
                           Expanded(
-                            child: Text(
-                              subscriptionStatus(context, subscription),
-                              style: Theme.of(context).textTheme.titleMedium,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SubscriptionStatusBadge(
+                                  subscription: subscription,
+                                ),
+                                SizedBox(height: 8),
+                                Text(
+                                  subscriptionStatus(context, subscription),
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.titleMedium,
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -302,13 +323,16 @@ class _SubscriptionDetailState extends ConsumerState<SubscriptionDetail> {
                         Text(subscription.description!),
                       Text(subscription.category),
                       SizedBox(height: 20),
-                      Text(
-                        context.l10n.uses(summary.uses),
-                        style: Theme.of(context).textTheme.displaySmall,
-                      ),
+                      AnimatedUsageTotal(uses: summary.uses),
                       SizedBox(height: 16),
                       RecordUsageButton(subscription: subscription),
                       SizedBox(height: 20),
+                      _Metric(
+                        context.l10n.averageCostPerUse,
+                        summary.averageMinorUnits == null
+                            ? context.l10n.noUsesYet
+                            : money(summary.averageMinorUnits!),
+                      ),
                       _Metric(context.l10n.prepaidCost, money(summary.cost)),
                       _Metric(
                         context.l10n.startDate,
@@ -319,12 +343,6 @@ class _SubscriptionDetailState extends ConsumerState<SubscriptionDetail> {
                         subscription.endDate == null
                             ? context.l10n.noExpiration
                             : DateFormat.yMMMd().format(subscription.endDate!),
-                      ),
-                      _Metric(
-                        context.l10n.averageCostPerUse,
-                        summary.averageMinorUnits == null
-                            ? context.l10n.noUsesYet
-                            : money(summary.averageMinorUnits!),
                       ),
                       if (summary.reference != null) ...[
                         _Metric(
@@ -351,9 +369,7 @@ class _SubscriptionDetailState extends ConsumerState<SubscriptionDetail> {
                         ),
                         if (summary.progress != null) ...[
                           SizedBox(height: 12),
-                          LinearProgressIndicator(
-                            value: summary.progress!.clamp(0, 1),
-                          ),
+                          UsageProgress(value: summary.progress!),
                           _Metric(
                             context.l10n.breakEvenProgress,
                             NumberFormat('0.0%').format(summary.progress!),
@@ -451,8 +467,19 @@ class _Metric extends StatelessWidget {
       spacing: 16,
       runSpacing: 4,
       children: [
-        Text(label),
-        Text(value, style: TextStyle(fontWeight: FontWeight.w600)),
+        Text(
+          label,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
+        Text(
+          value,
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            fontFeatures: [FontFeature.tabularFigures()],
+          ),
+        ),
       ],
     ),
   );

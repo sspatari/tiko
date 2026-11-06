@@ -308,5 +308,36 @@
         "type": "String"
       }
     }
-  }
+  },
+  "activeStatus": "Active",
+  "expiresSoonStatus": "Expires soon",
+  "upcomingStatus": "Upcoming",
+  "expiredStatus": "Expired",
+  "subscriptionDetailsSection": "Subscription details",
+  "pricingSection": "Pricing",
+  "validitySection": "Validity",
+  "singleUsePriceHelp": "Optional: the price of one use without this subscription, used to calculate savings.",
+  "dateAndTimeSection": "Date & time",
+  "usageDetailsSection": "Usage details",
+  "customizeHome": "Customize Home",
+  "compactHome": "Compact cards",
+  "compactHomeDescription": "Smaller cards with usage, cost per use and the same large +1 button.",
+  "arrangeSubscriptions": "Your subscriptions",
+  "arrangeSubscriptionsHelp": "Pinned subscriptions stay first. Drag to reorder within each group, or use the row menu to move up or down. Archived subscriptions stay in their collapsed section.",
+  "noSubscriptionsToArrange": "Create or restore a subscription to arrange your Home screen.",
+  "resetHomeLayout": "Reset Home layout",
+  "dragToReorder": "Drag to reorder",
+  "arrangeSubscriptionActions": "Arrange {name}",
+  "@arrangeSubscriptionActions": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pinSubscription": "Pin to top",
+  "unpinSubscription": "Unpin",
+  "moveUp": "Move up",
+  "moveDown": "Move down",
+  "pinnedStatus": "Pinned"
 }
