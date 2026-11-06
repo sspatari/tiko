@@ -34,6 +34,16 @@ Android. There is no account, backend, telemetry, or production seed data.
 - Custom Tiko launcher icons, Android adaptive/monochrome icons, native launch
   screens, accessible chart labels and scalable text.
 
+## Continue development
+
+The unfinished feature ideas are clearer break-even milestone messages, a last
+successful backup indicator with optional reminders, and Home Screen widgets.
+Home customization, expiry badges, animations and grouped forms are implemented.
+
+See [the continuation backlog in PROJECT_STATUS.md](PROJECT_STATUS.md#continuation-backlog)
+for feature checklists, incomplete device verification and the test-isolation work
+that must happen before any further automated phone testing.
+
 ## Run and validate
 
 Install Flutter stable compatible with the Dart constraint in `pubspec.yaml`.
@@ -177,24 +187,29 @@ missing IDs are ignored and cleaned up the next time the layout is saved.
 Layout preferences use the existing app_settings table and are included in JSON
 backups. Old backups default to full cards without pins or manual ordering.
 
-## Isolated device UI review
+## Device-test safety — current harness is not isolated
 
-The device harness uses an in-memory database with synthetic subscriptions; it
-never opens the production database or requests notification permission. Running
-it replaces the installed app binary temporarily. Restore the normal app after
-review, preserving the existing app's data:
+Do not run the existing integration harness on a phone containing real Tiko data.
+It uses synthetic in-memory records, but it still installs with the production
+identity `com.sspatari.tiko`. In the installed Flutter SDK, `flutter drive` stops
+and **uninstalls** the app by default after the test, including failed tests.
+Uninstalling removes the app's local data. Using in-memory fixtures does not
+protect that data, and reinstalling the release does not recover it.
 
-On iPhone, build the profile test app explicitly and use its actual Xcode output
-path; this also avoids the debug-launch and bundle-discovery issues seen locally:
+The earlier physical-phone test runs used this production identity and likely
+removed the user's original database. The previous claim that the test procedure
+preserved their data was incorrect. No recovery or usable pre-test backup has
+been verified.
 
-```sh
-flutter build ios --profile --target=integration_test/phone_polish_test.dart
-flutter drive --profile --use-application-binary=build/ios/Profile-iphoneos/Runner.app --driver=test_driver/integration_test.dart --target=integration_test/phone_polish_test.dart -d <device-id>
-flutter run --release -t lib/main.dart -d <device-id>
-```
+The harness remains in the repository for future repair. Before using it again,
+configure a distinct test bundle ID/application ID and verify that installation
+and cleanup cannot affect the production app. Use a disposable simulator/emulator
+with synthetic data until this is complete. Do not treat `--keep-app-running` as
+an adequate substitute for a separate test identity.
 
-The driver writes screenshots/results to the host's temporary directory under
-`tiko-phone-review` (override with `TIKO_SCREENSHOT_DIR`), not the repository.
-The checks cover usage/Undo, saved Home layout, dark mode, Romanian, 2x text and
-editing with a keyboard. They do not prove native notification delivery or a
-complete VoiceOver/TalkBack review.
+Previous physical runs checked usage/Undo, saved Home layout and light/dark,
+Romanian and 2x-text rendering. The final keyboard/form check did not pass; native
+notification delivery and full VoiceOver/TalkBack review remain unverified.
+Screenshots/results are temporary host artifacts, not backups of the user's data.
+See the continuation backlog for the remaining work. No further phone testing or
+changes are currently requested.

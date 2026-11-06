@@ -1,5 +1,70 @@
 # Tiko project status
 
+## Continuation backlog
+
+Saved at the user's request; this is a handoff, not authorization to start more
+phone testing. Inspect current files/Git status when resuming. Latest completed
+code verification was formatting, static analysis and 58 passing unit/widget
+tests; those checks have not been rerun for this documentation-only update.
+
+### Fix device-test isolation first
+- [ ] Give integration builds a distinct iOS bundle ID and Android application ID;
+  verify the installed identity before deployment and that cleanup cannot remove
+  the production app or its database. Keep fixtures in a separate database.
+- [ ] Repair the profile-mode input/keyboard harness and make failures produce
+  actionable diagnostics. First validate on disposable simulators/emulators.
+- [x] Correct the unsafe README procedure and earlier data-preservation claims.
+- [ ] If the user requests recovery help, check for a pre-test Tiko JSON export or
+  iPhone backup. None has been verified and no recovery has been performed.
+
+### Feature ideas not implemented
+- [ ] **Clearer break-even milestones:** improve the existing progress copy,
+  especially a positive message once prepaid cost has been recovered. Keep the
+  current financial calculations; hide reference-dependent copy without a single-
+  use price. Localize English/Romanian, including singular/plural cases.
+- [ ] **Backup confidence:** show the last successful backup date and offer an
+  optional backup reminder. Define what counts as a completed export with native
+  file/share APIs; do not claim an external file was saved without confirmation.
+  Decide reminder timing when implementing. Existing JSON export/import is done.
+- [ ] **Home Screen widgets:** show usage and average cost without opening Tiko.
+  Start with the existing iOS feasibility notes in docs/IOS_WIDGET.md; iOS needs
+  a real WidgetKit/AppIntent extension and shared-storage design. Android widgets
+  are also unimplemented. Decide platform order and whether +1 is included before
+  implementation; opening a subscription must never itself record a use.
+
+### Implemented features with incomplete verification
+- [ ] **Expiry notifications:** actual delivery with the app closed, permission
+  denial/re-enable, reboot recovery, time-zone changes, tapping from a terminated
+  app, and cancellation/rescheduling after editing, renewing, archiving or deleting.
+  Notification code and automated scheduling tests are already implemented.
+- [ ] **Forms/keyboard on a physical phone:** complete text entry, scrolling and
+  Save checks with the keyboard open, large text, both themes and Romanian. The
+  previous physical integration attempt did not complete this check successfully.
+- [ ] **Accessibility:** full VoiceOver/TalkBack review, reading order, action
+  labels, focus, large text and reduced motion. Automated coverage is not a
+  substitute for screen-reader validation.
+- [ ] Existing platform follow-ups: native import/export/share sheets, large-history
+  analytics profiling, future Android plugin KGP compatibility and store packaging.
+  Do not upload or publish without a separate user request.
+
+Home pinning/reordering/compact mode, badges, subtle animations, typography and
+form grouping are implemented; do not list them as new unfinished features.
+
+## Device-data incident — 2026-11-06
+
+The assistant ran the integration harness against `com.sspatari.tiko`, the same
+identity as the user's installed release. Although the fixtures used an in-memory
+database, the installed Flutter SDK's drive-service cleanup stops and uninstalls
+the package after tests by default, even on test failure. Those runs likely
+removed the user's original on-device database. Earlier assurances that the data
+would remain untouched were wrong. Restoring/relaunching the normal release did
+not establish data preservation and does not recover deleted records.
+
+The normal release was subsequently installed/launched and further phone testing
+was stopped at the user's request. No usable pre-test backup or recovery has been
+verified. Do not repeat the production-identity test workflow. The current harness
+is unsafe for a phone with real Tiko data until isolation is implemented above.
+
 ## Home customization and phone polish
 - Added Customize Home in the Home toolbar: pin subscriptions, reorder within
   pinned/unpinned groups using drag handles or accessible Move up/Move down menus,
@@ -15,10 +80,11 @@
   empty-usage text. Home scrolls to the top after a saved layout change. Compact
   mode/large text use an icon-only Create FAB with a localized tooltip. Subscription
   icons adapt to light/dark contrast without modifying stored colors.
-- Added an integration_test harness using only in-memory synthetic records, with
-  screenshots/results in the host temporary directory. It never opens production
-  data or requests notification permission. README documents running the harness
-  and restoring the normal app afterwards. Signed iPhone release build passes.
+- Added an integration_test harness with in-memory synthetic records and
+  temporary screenshots. It did not directly open production data or request
+  notification permission, but its production app identity and automatic uninstall
+  made the deployment unsafe. See the incident above; the old README procedure
+  has been removed. Signed iPhone release build passes.
 - Formatting, flutter analyze and all 58 unit/widget tests pass, including saved
   layouts across DB reopening, backup compatibility, ordering/pin boundaries,
   accessible reordering, compact +1/Undo, reset and draft cancellation. Whitespace
@@ -31,7 +97,7 @@
   the latest normal app was installed and launched after the temporary test installation. Native
   notification delivery and full VoiceOver/TalkBack checks remain unverified.
 
-## Remaining premium UI refinements
+## Completed premium UI refinements
 - Home and subscription details show icon/text badges for Active, Expires soon,
   Upcoming, Expired and Archived. The expiry warning includes the final three
   calendar days and expiry day; exact dates remain visible. Pure domain logic
@@ -130,8 +196,8 @@ Both iOS and Android use com.sspatari.tiko (Apple rejected the previous com.tiko
 ## Architecture
 Presentation currently shares app providers through Dart library parts. Independent repositories own persistence and pure services own financial/date/analytics calculations. README.md documents schemas, formulas, setup, backup behavior and dependencies. Generated files and pubspec.lock should be committed; secrets, build artifacts and local SDK configuration must remain excluded.
 
-## Verification
-All 36 tests pass. Static analysis, formatting and whitespace checks pass. Backup/history tests also pass in Europe/Bucharest across the spring DST boundary. Android debug APK compilation succeeded, and the rebranded app built/launched on the iPhone 17 simulator. Simulator screenshots and URL opening verified that routing reaches a missing-subscription screen; the recovery button is covered by widget tests. The final incremental Android APK build and iPhone 17 simulator build/launch both succeeded. Do not infer manual file-picker/share-sheet or physical-device validation from these results.
+## Earlier verification (before the UI and Home changes)
+All 36 tests passed at that stage. Static analysis, formatting and whitespace checks pass. Backup/history tests also pass in Europe/Bucharest across the spring DST boundary. Android debug APK compilation succeeded, and the rebranded app built/launched on the iPhone 17 simulator. Simulator screenshots and URL opening verified that routing reaches a missing-subscription screen; the recovery button is covered by widget tests. The final incremental Android APK build and iPhone 17 simulator build/launch both succeeded. Do not infer manual file-picker/share-sheet or physical-device validation from these results.
 
 ## Remaining / next step
 Manually exercise native export/import/sharing and accessibility on devices. Profile large analytics histories; analytics currently loads events when its tab opens. Complete release signing/store configuration before publishing. Evaluate a real WidgetKit/AppIntent extension with a registered App Group and shared SQLite migration; deep links are the current fallback. Installed file_picker/share_plus emit a future KGP compatibility warning on Android, although the current build succeeds.
