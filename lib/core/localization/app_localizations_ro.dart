@@ -719,4 +719,51 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get pinnedStatus => 'Fixat';
+
+  @override
+  String usesToRecoverCost(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'Încă $countString de utilizări pentru a recupera costul abonamentului.',
+      few:
+          'Încă $countString utilizări pentru a recupera costul abonamentului.',
+      one: 'Încă o utilizare pentru a recupera costul abonamentului.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String usesShortOfRecoveringCost(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$countString de utilizări sub pragul de recuperare a costului abonamentului.',
+      few:
+          '$countString utilizări sub pragul de recuperare a costului abonamentului.',
+      one: 'O utilizare sub pragul de recuperare a costului abonamentului.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get prepaidCostRecovered => 'Ai recuperat costul abonamentului.';
+
+  @override
+  String get noPrepaidCostToRecover =>
+      'Abonamentul nu are un cost de recuperat.';
+
+  @override
+  String get costRecoveryComparisonHint =>
+      'Comparativ cu plata pentru fiecare utilizare.';
 }

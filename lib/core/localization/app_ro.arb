@@ -222,5 +222,26 @@
   "unpinSubscription": "Anulează fixarea",
   "moveUp": "Mută în sus",
   "moveDown": "Mută în jos",
-  "pinnedStatus": "Fixat"
+  "pinnedStatus": "Fixat",
+  "usesToRecoverCost": "{count, plural, one{Încă o utilizare pentru a recupera costul abonamentului.} few{Încă {count} utilizări pentru a recupera costul abonamentului.} other{Încă {count} de utilizări pentru a recupera costul abonamentului.}}",
+  "@usesToRecoverCost": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "usesShortOfRecoveringCost": "{count, plural, one{O utilizare sub pragul de recuperare a costului abonamentului.} few{{count} utilizări sub pragul de recuperare a costului abonamentului.} other{{count} de utilizări sub pragul de recuperare a costului abonamentului.}}",
+  "@usesShortOfRecoveringCost": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "prepaidCostRecovered": "Ai recuperat costul abonamentului.",
+  "noPrepaidCostToRecover": "Abonamentul nu are un cost de recuperat.",
+  "costRecoveryComparisonHint": "Comparativ cu plata pentru fiecare utilizare."
 }

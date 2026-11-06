@@ -4,6 +4,13 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// Flutter supplies -Ptarget for both flutter test and flutter drive builds.
+val dartTarget = (project.findProperty("target")?.toString() ?: "lib/main.dart")
+    .replace('\\', '/')
+val productionTarget = rootProject.projectDir.parentFile.resolve("lib/main.dart").absolutePath.replace('\\', '/')
+val isIntegrationTarget = dartTarget != "lib/main.dart" && dartTarget != productionTarget &&
+    dartTarget != "file://$productionTarget"
+
 android {
     namespace = "com.sspatari.tiko"
     compileSdk = flutter.compileSdkVersion
@@ -17,7 +24,9 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.sspatari.tiko"
+        applicationId = if (isIntegrationTarget) "com.sspatari.tiko.uitest" else "com.sspatari.tiko"
+        manifestPlaceholders["tikoLabel"] = if (isIntegrationTarget) "Tiko UI Test" else "Tiko"
+        manifestPlaceholders["tikoScheme"] = if (isIntegrationTarget) "tiko-uitest" else "tiko"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion

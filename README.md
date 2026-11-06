@@ -15,7 +15,10 @@ Android. There is no account, backend, telemetry, or production seed data.
   Undo deletes the exact event. Uses outside validity require confirmation.
 - Subscription details show usage, average cost, equivalent individual cost,
   savings/unrecovered cost and break-even metrics. Missing reference prices hide
-  reference-dependent results.
+  reference-dependent results. Home/details explain remaining uses and celebrate
+  recovering prepaid cost compared with paying per use; closed periods show a
+  shortfall rather than suggesting future uses. Free subscriptions have separate
+  wording, and missing single-use prices hide the comparison.
 - Archive/restore, confirmed deletion and transactional renewal. Renewals create
   separate linked periods and preserve historical events.
 - History supports manual entry, date/time, quantity and note editing, confirmed
@@ -36,9 +39,9 @@ Android. There is no account, backend, telemetry, or production seed data.
 
 ## Continue development
 
-The unfinished feature ideas are clearer break-even milestone messages, a last
-successful backup indicator with optional reminders, and Home Screen widgets.
-Home customization, expiry badges, animations and grouped forms are implemented.
+The unfinished feature ideas are a last successful backup indicator with optional
+reminders and Home Screen widgets. Clearer break-even milestone messages, Home
+customization, expiry badges, animations and grouped forms are implemented.
 
 See [the continuation backlog in PROJECT_STATUS.md](PROJECT_STATUS.md#continuation-backlog)
 for feature checklists, incomplete device verification and the test-isolation work
@@ -187,29 +190,54 @@ missing IDs are ignored and cleaned up the next time the layout is saved.
 Layout preferences use the existing app_settings table and are included in JSON
 backups. Old backups default to full cards without pins or manual ordering.
 
-## Device-test safety — current harness is not isolated
+## Isolated UI test workflow
 
-Do not run the existing integration harness on a phone containing real Tiko data.
-It uses synthetic in-memory records, but it still installs with the production
-identity `com.sspatari.tiko`. In the installed Flutter SDK, `flutter drive` stops
-and **uninstalls** the app by default after the test, including failed tests.
-Uninstalling removes the app's local data. Using in-memory fixtures does not
-protect that data, and reinstalling the release does not recover it.
+The production identity remains `com.sspatari.tiko`. Integration builds use
+`com.sspatari.tiko.uitest`, the name **Tiko UI Test**, and the `tiko-uitest` URL
+scheme. No shared App Group or shared database is configured.
 
-The earlier physical-phone test runs used this production identity and likely
-removed the user's original database. The previous claim that the test procedure
-preserved their data was incorrect. No recovery or usable pre-test backup has
-been verified.
+- iOS uses the separate `uitest` scheme/configurations. A build guard rejects
+  alternate Dart entrypoints using the production identity or URL scheme.
+- Android assigns the test identity to alternate Dart entrypoints automatically.
+  Normal `lib/main.dart` builds retain the production identity.
+- The supported runner refuses physical devices before building. It checks the
+  built bundle/APK's actual application ID before invoking the test runner.
 
-The harness remains in the repository for future repair. Before using it again,
-configure a distinct test bundle ID/application ID and verify that installation
-and cleanup cannot affect the production app. Use a disposable simulator/emulator
-with synthetic data until this is complete. Do not treat `--keep-app-running` as
-an adequate substitute for a separate test identity.
+Use a disposable, booted simulator/emulator with synthetic data:
 
-Previous physical runs checked usage/Undo, saved Home layout and light/dark,
-Romanian and 2x-text rendering. The final keyboard/form check did not pass; native
-notification delivery and full VoiceOver/TalkBack review remain unverified.
-Screenshots/results are temporary host artifacts, not backups of the user's data.
-See the continuation backlog for the remaining work. No further phone testing or
-changes are currently requested.
+```sh
+dart run tool/run_ui_review.dart ios <simulator-id>
+# Or:
+dart run tool/run_ui_review.dart android <emulator-id>
+```
+
+The runner builds the test entrypoint, verifies the artifact, and runs the review
+from a temporary verified copy so concurrent normal builds cannot replace it.
+On Android it needs the SDK's `aapt` to inspect the manifest; inability to inspect
+identity aborts deployment. Screenshots, results and failure metadata go to the
+host temporary directory under `tiko-ui-review` (override with
+`TIKO_SCREENSHOT_DIR`). No build artifacts or screenshots belong in Git.
+
+Do not bypass these checks or run raw `flutter drive` against a production app.
+Flutter drive uninstalls its app by default after tests, including failures.
+In-memory fixtures and `--keep-app-running` are not substitutes for an isolated
+native identity. Physical-device runs remain outside the supported workflow.
+
+The workflow passed an end-to-end check on a newly created iPhone simulator:
+the test app was automatically uninstalled while the normal app, its container
+and all rows in a controlled synthetic database baseline remained intact. This
+verification used no phone data. See PROJECT_STATUS.md for evidence and limits.
+
+### Previous data-loss incident
+
+Earlier phone tests used the production identity and likely removed the user's
+original database through automatic test cleanup. The previous assurance that
+those tests preserved the data was wrong. Reinstalling the normal release does
+not recover deleted records; no pre-test backup or recovery has been verified.
+
+Previous phone runs checked usage/Undo, Home layout and light/dark, Romanian and
+2x-text rendering. Full native keyboard/form validation, notification delivery
+and VoiceOver/TalkBack review remain incomplete. See PROJECT_STATUS.md for the
+latest verification of the repaired harness; do not infer those checks passed
+from its implementation. No further phone testing or changes are authorized by
+this handoff.

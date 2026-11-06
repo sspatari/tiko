@@ -712,4 +712,43 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pinnedStatus => 'Pinned';
+
+  @override
+  String usesToRecoverCost(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString more uses to recover your prepaid cost.',
+      one: '1 more use to recover your prepaid cost.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String usesShortOfRecoveringCost(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString uses short of recovering your prepaid cost.',
+      one: '1 use short of recovering your prepaid cost.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get prepaidCostRecovered => 'You’ve recovered your prepaid cost.';
+
+  @override
+  String get noPrepaidCostToRecover => 'No prepaid cost to recover.';
+
+  @override
+  String get costRecoveryComparisonHint => 'Compared with paying per use.';
 }

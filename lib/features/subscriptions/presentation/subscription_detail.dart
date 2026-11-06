@@ -168,6 +168,7 @@ class _SubscriptionDetailState extends ConsumerState<SubscriptionDetail> {
 
   @override
   Widget build(BuildContext context) {
+    ref.watch(currentLocalDateProvider);
     final subscriptions = ref.watch(subscriptionsProvider);
     return subscriptions.when(
       loading: () => Scaffold(
@@ -334,6 +335,16 @@ class _SubscriptionDetailState extends ConsumerState<SubscriptionDetail> {
                             : money(summary.averageMinorUnits!),
                       ),
                       _Metric(context.l10n.prepaidCost, money(summary.cost)),
+                      if (summary.costRecoveryState !=
+                          CostRecoveryState.unavailable)
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 12),
+                          child: BreakEvenMessage(
+                            summary: summary,
+                            periodClosed: subscriptionOrder(subscription) >= 2,
+                            showComparisonHint: true,
+                          ),
+                        ),
                       _Metric(
                         context.l10n.startDate,
                         DateFormat.yMMMd().format(subscription.startDate),
@@ -362,10 +373,6 @@ class _SubscriptionDetailState extends ConsumerState<SubscriptionDetail> {
                         _Metric(
                           context.l10n.breakEvenThreshold,
                           context.l10n.uses(summary.breakEvenUses!),
-                        ),
-                        _Metric(
-                          context.l10n.remainingUntilBreakEven,
-                          context.l10n.uses(summary.remainingUses!),
                         ),
                         if (summary.progress != null) ...[
                           SizedBox(height: 12),

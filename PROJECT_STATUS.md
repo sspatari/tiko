@@ -2,26 +2,33 @@
 
 ## Continuation backlog
 
-Saved at the user's request; this is a handoff, not authorization to start more
-phone testing. Inspect current files/Git status when resuming. Latest completed
-code verification was formatting, static analysis and 58 passing unit/widget
-tests; those checks have not been rerun for this documentation-only update.
+The user resumed development. Test isolation was the first priority; no phone
+apps were installed, launched or changed during this work. Inspect current
+files/Git status when resuming; the latest verification is recorded below.
 
-### Fix device-test isolation first
-- [ ] Give integration builds a distinct iOS bundle ID and Android application ID;
-  verify the installed identity before deployment and that cleanup cannot remove
-  the production app or its database. Keep fixtures in a separate database.
-- [ ] Repair the profile-mode input/keyboard harness and make failures produce
-  actionable diagnostics. First validate on disposable simulators/emulators.
+### Device-test isolation and remaining harness work
+- [x] Give alternate-entrypoint builds the separate identity
+  `com.sspatari.tiko.uitest`, display name Tiko UI Test and URL scheme tiko-uitest.
+  Original production identity/signing remain intact. Test and production build
+  metadata were checked on both platforms.
+- [x] Add build guards and a virtual-device-only runner that verifies the actual
+  app identity before launch and uses a temporary verified copy of the artifact.
+- [x] Repair profile input simulation, allow legitimate hardware-keyboard zero
+  insets, dispose fixtures on failures, and save failure diagnostics. This is a
+  code change, now exercised successfully by the debug Simulator integration
+  flow. Physical/profile-mode keyboard behavior remains unverified.
+- [x] On a fresh disposable simulator, run the guarded UI review and verify
+  that test-app cleanup leaves the normal app, its container and synthetic
+  database rows intact. The controlled repeat passed; no phone was involved.
 - [x] Correct the unsafe README procedure and earlier data-preservation claims.
 - [ ] If the user requests recovery help, check for a pre-test Tiko JSON export or
   iPhone backup. None has been verified and no recovery has been performed.
 
-### Feature ideas not implemented
-- [ ] **Clearer break-even milestones:** improve the existing progress copy,
-  especially a positive message once prepaid cost has been recovered. Keep the
-  current financial calculations; hide reference-dependent copy without a single-
-  use price. Localize English/Romanian, including singular/plural cases.
+### Feature backlog
+- [x] **Clearer break-even milestones:** remaining-use and recovered-cost
+  messages on Home/details, positive milestones in compact view, closed-period
+  shortfalls and explicit zero-cost wording. Existing calculations are preserved;
+  comparisons require a single-use price. English/Romanian plurals are covered.
 - [ ] **Backup confidence:** show the last successful backup date and offer an
   optional backup reminder. Define what counts as a completed export with native
   file/share APIs; do not claim an external file was saved without confirmation.
@@ -50,6 +57,69 @@ tests; those checks have not been rerun for this documentation-only update.
 Home pinning/reordering/compact mode, badges, subtle animations, typography and
 form grouping are implemented; do not list them as new unfinished features.
 
+## Simulator preservation check and recovery messages
+
+- Created a fresh Tiko Isolation Review iPhone 17 simulator on iOS 26.5. Installed
+  the normal app there and inserted a clearly synthetic subscription, usage event
+  and settings marker into its actual Documents/tiko.sqlite database. No existing
+  simulator's or physical phone's data was used.
+- The guarded .uitest review passed twice. The original sentinel rows survived
+  both runs. An initial uncontrolled snapshot gained three one-use events before
+  the test app finished building; the source of those additional events was not
+  established. The fixture app was explicitly stopped and a fresh baseline taken
+  before the controlled repeat. That repeat preserved every row exactly: one
+  subscription, four usage events and one settings row. The normal app/container
+  remained registered and the .uitest app was removed by default test cleanup.
+- Evidence: /tmp/tiko-isolation-proof-A5650FC8-4177-48C3-AC64-2947EBC70896/
+  contains before.json, baseline2.json and after.json. The disposable simulator
+  A5650FC8-4177-48C3-AC64-2947EBC70896 was shut down with its synthetic data
+  retained for inspection. This proves the new simulator workflow's isolation;
+  it does not recover the user's earlier lost phone data.
+- Added a pure derived CostRecoveryState to FinancialSummary, keeping all money,
+  rounding and usage calculations unchanged. Home/details show remaining uses,
+  a positive recovered-cost message, zero-cost wording, and historical shortfalls
+  for expired/archived periods. Compact cards show positive milestones. Details
+  explain that the comparison is against paying per use. Without a reference
+  price the comparison is hidden. Undo can revert a reached milestone.
+- Verification after the message changes: dart format lib test, flutter analyze,
+  all 66 unit/widget tests and git diff --check pass. New tests cover integer
+  threshold boundaries, missing reference/zero cost, English/Romanian plurals,
+  closed periods, dark/2x-text layout, compact milestones and exact-event Undo.
+  The native Simulator review passed before the new milestone wording; the
+  wording itself was verified by host widget/localization tests, not a new phone
+  deployment. No phone app was installed, launched or modified for this work.
+- Next feature: backup confidence (successful-export semantics and optional
+  reminder timing need definition), followed by Home Screen widgets. Native
+  notification delivery, full screen-reader review and physical keyboard checks
+  remain outstanding.
+
+## Test-isolation implementation and verification
+
+- iOS has an additional uitest scheme with Debug/Profile/Release-uitest
+  configurations. The existing Runner scheme and signing team were preserved.
+  A build-phase guard rejects non-production Dart entrypoints unless the test
+  bundle ID and URL scheme are selected.
+- Android automatically uses the test application ID/name/URL scheme for alternate
+  Dart entrypoints. Normal lib/main.dart builds keep their production settings.
+- `tool/run_ui_review.dart` accepts only actual simulators/emulators from Flutter's
+  device metadata, rejects physical devices before build/deployment, checks the
+  built artifact ID, and stages a verified copy against concurrent-build changes.
+  iOS inspection uses plutil; Android uses SDK aapt. Failure to inspect aborts.
+- Regression tests cover physical-device rejection before any build command,
+  exact artifact-ID matching, APK parsing and iOS build refusal with a production
+  identity/URL scheme. No database schema or app business logic changed.
+- Verification: dart format lib test (plus test tooling), flutter analyze, all
+  62 unit/widget tests, plist/project lint and git diff --check pass. Both isolated
+  and normal Android debug APKs and iOS Simulator debug apps built successfully.
+  Actual metadata showed com.sspatari.tiko.uitest / Tiko UI Test / tiko-uitest for
+  test builds and com.sspatari.tiko / Tiko / tiko for normal builds (Android URL
+  mapping is configured in the manifest; native iOS URL metadata was inspected).
+  Existing file_picker/share_plus future-KGP warnings remain.
+- The original isolation implementation was verified with build-only checks.
+  The subsequent disposable-Simulator UI/cleanup-preservation check and milestone
+  work are recorded above. Full physical keyboard, notification delivery and
+  screen-reader checks remain incomplete.
+
 ## Device-data incident — 2026-11-06
 
 The assistant ran the integration harness against `com.sspatari.tiko`, the same
@@ -62,8 +132,9 @@ not establish data preservation and does not recover deleted records.
 
 The normal release was subsequently installed/launched and further phone testing
 was stopped at the user's request. No usable pre-test backup or recovery has been
-verified. Do not repeat the production-identity test workflow. The current harness
-is unsafe for a phone with real Tiko data until isolation is implemented above.
+verified. Do not repeat the production-identity test workflow. The subsequent
+isolation fix above supports only virtual devices and does not authorize further
+phone changes or establish recovery of the lost data.
 
 ## Home customization and phone polish
 - Added Customize Home in the Home toolbar: pin subscriptions, reorder within
@@ -212,8 +283,8 @@ Aligned Android applicationId, namespace and MainActivity package/path with com.
 Rebuilt and launched com.sspatari.tiko on the iPhone 17 simulator. Confirmed the built bundle ID and successful native process launch. Restarted the simulator after it shut down during verification; a fresh screenshot confirms the branded Home screen and all four navigation tabs render correctly. This verifies startup/rendering, not a new complete interaction test pass.
 
 ## Resume checklist
-1. Read AGENTS.md, README.md and this file; inspect Git status. The core implementation was committed/pushed as 0438c60 on master to github.com/sspatari/tiko. Application identifiers, the Android package and iOS signing configuration are now aligned in the subsequent identity update. Inspect Git status for later pending work and preserve the user's Xcode signing team.
-2. Test the installed app on the physical iPhone: create subscription, +1, exact-event Undo, manual entry/edit/delete, validity override, archive/restore and renewal. Use the release app com.sspatari.tiko. Installation/launch is verified, full interaction testing is not.
+1. Read AGENTS.md, README.md and this file; inspect Git status and the latest log rather than relying on historical commit hashes. Preserve the user's Xcode signing team and production application identity.
+2. Continue from the backlog above. Automated UI review must use the guarded runner and a disposable simulator/emulator with the separate uitest identity. Phone testing is not currently authorized; never install the integration harness under the production identity.
 3. Test native JSON export/import, repeated imports, file picker and share sheets. Check Romanian, dark mode, large text, VoiceOver/TalkBack and offline restart/persistence. Fix reproduced issues and run relevant checks.
 4. Profile large histories/analytics and address the documented future Android plugin KGP compatibility warning before upgrading Flutter.
 5. Prepare release signing and TestFlight/store packaging when the user requests distribution. Do not upload/publish automatically based on this checklist alone.

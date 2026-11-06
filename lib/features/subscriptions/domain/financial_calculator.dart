@@ -1,9 +1,19 @@
+enum CostRecoveryState { unavailable, inProgress, recovered, noCost }
+
 /// Financial calculations use integer minor units until display formatting.
 class FinancialSummary {
   const FinancialSummary(this.cost, this.uses, this.reference);
   final int cost;
   final int uses;
   final int? reference;
+  CostRecoveryState get costRecoveryState {
+    if (reference == null) return CostRecoveryState.unavailable;
+    if (cost == 0) return CostRecoveryState.noCost;
+    return remainingUses == 0
+        ? CostRecoveryState.recovered
+        : CostRecoveryState.inProgress;
+  }
+
   int? get averageMinorUnits => uses == 0 ? null : (cost + uses ~/ 2) ~/ uses;
   int? get equivalentMinorUnits => reference == null ? null : uses * reference!;
   int? get savingsMinorUnits =>

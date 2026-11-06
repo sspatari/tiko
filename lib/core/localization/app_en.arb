@@ -339,5 +339,26 @@
   "unpinSubscription": "Unpin",
   "moveUp": "Move up",
   "moveDown": "Move down",
-  "pinnedStatus": "Pinned"
+  "pinnedStatus": "Pinned",
+  "usesToRecoverCost": "{count, plural, one{1 more use to recover your prepaid cost.} other{{count} more uses to recover your prepaid cost.}}",
+  "@usesToRecoverCost": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "usesShortOfRecoveringCost": "{count, plural, one{1 use short of recovering your prepaid cost.} other{{count} uses short of recovering your prepaid cost.}}",
+  "@usesShortOfRecoveringCost": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "prepaidCostRecovered": "You’ve recovered your prepaid cost.",
+  "noPrepaidCostToRecover": "No prepaid cost to recover.",
+  "costRecoveryComparisonHint": "Compared with paying per use."
 }

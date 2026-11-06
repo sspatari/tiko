@@ -1310,6 +1310,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pinned'**
   String get pinnedStatus;
+
+  /// No description provided for @usesToRecoverCost.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 more use to recover your prepaid cost.} other{{count} more uses to recover your prepaid cost.}}'**
+  String usesToRecoverCost(int count);
+
+  /// No description provided for @usesShortOfRecoveringCost.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 use short of recovering your prepaid cost.} other{{count} uses short of recovering your prepaid cost.}}'**
+  String usesShortOfRecoveringCost(int count);
+
+  /// No description provided for @prepaidCostRecovered.
+  ///
+  /// In en, this message translates to:
+  /// **'You’ve recovered your prepaid cost.'**
+  String get prepaidCostRecovered;
+
+  /// No description provided for @noPrepaidCostToRecover.
+  ///
+  /// In en, this message translates to:
+  /// **'No prepaid cost to recover.'**
+  String get noPrepaidCostToRecover;
+
+  /// No description provided for @costRecoveryComparisonHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Compared with paying per use.'**
+  String get costRecoveryComparisonHint;
 }
 
 class _AppLocalizationsDelegate

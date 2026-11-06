@@ -32,6 +32,7 @@ part 'features/analytics/presentation/analytics_screen.dart';
 part 'features/settings/presentation/settings_screen.dart';
 part 'features/backup/presentation/backup_actions.dart';
 part 'features/subscriptions/presentation/subscription_detail.dart';
+part 'features/subscriptions/presentation/break_even_message.dart';
 part 'features/subscriptions/presentation/subscription_editor.dart';
 part 'features/usage/presentation/record_usage_button.dart';
 part 'features/usage/presentation/usage_history.dart';
@@ -404,20 +405,26 @@ class _HomeState extends ConsumerState<HomeScreen> {
                               ),
                         ),
                       ],
-                      if (!layout.compact && result.breakEvenUses != null) ...[
+                      if (!layout.compact &&
+                          result.costRecoveryState !=
+                              CostRecoveryState.unavailable) ...[
                         SizedBox(height: 16),
-                        UsageProgress(value: result.progress ?? 0),
-                        SizedBox(height: 8),
-                        Text(
-                          context.l10n.remainingUses(result.remainingUses!),
-                          style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onSurfaceVariant,
-                              ),
+                        if (result.progress != null) ...[
+                          UsageProgress(value: result.progress!),
+                          SizedBox(height: 8),
+                        ],
+                        BreakEvenMessage(
+                          summary: result,
+                          periodClosed: subscriptionOrder(subscription) >= 2,
                         ),
                       ],
+                      if (layout.compact &&
+                          result.costRecoveryState ==
+                              CostRecoveryState.recovered)
+                        Padding(
+                          padding: EdgeInsets.only(top: 8),
+                          child: BreakEvenMessage(summary: result),
+                        ),
                       SizedBox(height: 20),
                       RecordUsageButton(subscription: subscription),
                       if (!layout.compact)
