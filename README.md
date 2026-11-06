@@ -39,9 +39,16 @@ Android. There is no account, backend, telemetry, or production seed data.
 
 ## Continue development
 
-The unfinished feature ideas are a last successful backup indicator with optional
-reminders and Home Screen widgets. Clearer break-even milestone messages, Home
-customization, expiry badges, animations and grouped forms are implemented.
+Feature work is paused at the user's request (2026-11-07). No new feature,
+deployment, phone testing or backend work is queued. Ask what the user wants to
+resume before implementing an optional idea from the backlog.
+
+Home Screen widgets remain an unfinished feature idea. Backup confidence and
+backup reminders are deferred at the user's request while a future server with
+its own database is being considered. Backend/sync design has not been decided;
+Tiko currently remains offline. Existing manual JSON export/import remains available.
+Clearer break-even milestone messages, Home customization, expiry badges,
+animations and grouped forms are implemented.
 
 See [the continuation backlog in PROJECT_STATUS.md](PROJECT_STATUS.md#continuation-backlog)
 for feature checklists, incomplete device verification and the test-isolation work

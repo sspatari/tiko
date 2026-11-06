@@ -1,5 +1,30 @@
 # Tiko project status
 
+## Session handoff — 2026-11-07
+
+The user is closing this session and does not want additional features now.
+No implementation, deployment, phone testing or publishing is queued. On the next
+session, report the current state and ask what they want to work on; do not treat
+this backlog as permission to begin work automatically.
+
+- Completed code is committed/pushed as f988820 (`feat: clarify break-even
+  milestones and isolate UI tests`). Latest code checks: formatting, analysis and
+  66 unit/widget tests passed. The controlled Simulator isolation check passed.
+- Backup confidence/reminders are deferred. A future server/database is only an
+  idea; no backend architecture or implementation has been selected.
+- Optional ideas discussed, not requested: Home Screen widgets, subscription
+  search, Home category filters, renewal comparison, custom usage goals and
+  per-subscription notification timing. Performance and accessibility improvements
+  are also candidates, not automatic next tasks.
+- Existing unverified areas remain below: native notification delivery, physical
+  keyboard behavior, full screen-reader review and native file/share interactions.
+  Phone testing requires a new explicit request and must never use the production
+  identity for integration tests.
+- At close, only README.md / PROJECT_STATUS.md documentation edits are pending;
+  inspect Git status rather than assuming they have been committed. No app code
+  or device changes were made for this handoff. Documentation whitespace checks
+  pass; code tests were not rerun for these documentation-only edits.
+
 ## Continuation backlog
 
 The user resumed development. Test isolation was the first priority; no phone
@@ -29,10 +54,13 @@ files/Git status when resuming; the latest verification is recorded below.
   messages on Home/details, positive milestones in compact view, closed-period
   shortfalls and explicit zero-cost wording. Existing calculations are preserved;
   comparisons require a single-use price. English/Romanian plurals are covered.
-- [ ] **Backup confidence:** show the last successful backup date and offer an
-  optional backup reminder. Define what counts as a completed export with native
-  file/share APIs; do not claim an external file was saved without confirmation.
-  Decide reminder timing when implementing. Existing JSON export/import is done.
+- **Deferred — backup confidence/reminders:** the user does not want this work
+  for now and is considering a future server with its own database. No backup
+  confidence implementation was started. Existing manual JSON export/import
+  stays available. Do not resume the deferred feature without a new request.
+- **Future idea — server/database:** no backend implementation, hosting, accounts,
+  synchronization model or migration has been selected or authorized. Keep current
+  offline behavior and existing records intact until that work is explicitly scoped.
 - [ ] **Home Screen widgets:** show usage and average cost without opening Tiko.
   Start with the existing iOS feasibility notes in docs/IOS_WIDGET.md; iOS needs
   a real WidgetKit/AppIntent extension and shared-storage design. Android widgets
@@ -88,10 +116,18 @@ form grouping are implemented; do not list them as new unfinished features.
   The native Simulator review passed before the new milestone wording; the
   wording itself was verified by host widget/localization tests, not a new phone
   deployment. No phone app was installed, launched or modified for this work.
-- Next feature: backup confidence (successful-export semantics and optional
-  reminder timing need definition), followed by Home Screen widgets. Native
-  notification delivery, full screen-reader review and physical keyboard checks
-  remain outstanding.
+- Backup confidence is now deferred at the user's request. The next feature
+  candidate would be Home Screen widgets if requested later; platform order and
+  interaction scope still need definition. Feature work is paused for now. Native notification delivery, full screen-reader review and
+  physical keyboard checks remain outstanding.
+
+## Backup scope update
+
+The user deferred backup confidence/reminders in favor of considering a server
+with its own database later. This is a backlog change, not a decision to replace
+SQLite or implement a backend now. Documentation-only update; git diff --check
+passes. No app code, phone state or existing records changed, and tests were not
+rerun for this documentation change.
 
 ## Test-isolation implementation and verification
 
@@ -284,7 +320,7 @@ Rebuilt and launched com.sspatari.tiko on the iPhone 17 simulator. Confirmed the
 
 ## Resume checklist
 1. Read AGENTS.md, README.md and this file; inspect Git status and the latest log rather than relying on historical commit hashes. Preserve the user's Xcode signing team and production application identity.
-2. Continue from the backlog above. Automated UI review must use the guarded runner and a disposable simulator/emulator with the separate uitest identity. Phone testing is not currently authorized; never install the integration harness under the production identity.
+2. Ask what the user wants to resume; no backlog item is automatically authorized. Automated UI review must use the guarded runner and a disposable simulator/emulator with the separate uitest identity. Phone testing is not currently authorized; never install the integration harness under the production identity.
 3. Test native JSON export/import, repeated imports, file picker and share sheets. Check Romanian, dark mode, large text, VoiceOver/TalkBack and offline restart/persistence. Fix reproduced issues and run relevant checks.
 4. Profile large histories/analytics and address the documented future Android plugin KGP compatibility warning before upgrading Flutter.
 5. Prepare release signing and TestFlight/store packaging when the user requests distribution. Do not upload/publish automatically based on this checklist alone.
