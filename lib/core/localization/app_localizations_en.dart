@@ -603,4 +603,35 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get openError => 'Could not open Tiko. Tap to retry.';
+
+  @override
+  String get expiryReminders => 'Expiry reminders';
+
+  @override
+  String get expiryRemindersDescription =>
+      'Notifications 3 days before expiry and on the expiry date, at 9 AM.';
+
+  @override
+  String get reminderPermissionDenied =>
+      'Notifications are blocked. Allow Tiko notifications in your phone settings, then try again.';
+
+  @override
+  String get reminderFailure =>
+      'Reminders could not be scheduled. Check notification permission in your phone settings, then retry.';
+
+  @override
+  String get retryReminders => 'Retry reminders';
+
+  @override
+  String get expiryReminderTitle => 'Subscription expiry';
+
+  @override
+  String expiresTodayReminder(String name) {
+    return '$name expires today.';
+  }
+
+  @override
+  String expiresSoonReminder(String name) {
+    return '$name expires in 3 days.';
+  }
 }

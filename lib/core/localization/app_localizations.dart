@@ -1118,6 +1118,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not open Tiko. Tap to retry.'**
   String get openError;
+
+  /// No description provided for @expiryReminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiry reminders'**
+  String get expiryReminders;
+
+  /// No description provided for @expiryRemindersDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications 3 days before expiry and on the expiry date, at 9 AM.'**
+  String get expiryRemindersDescription;
+
+  /// No description provided for @reminderPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications are blocked. Allow Tiko notifications in your phone settings, then try again.'**
+  String get reminderPermissionDenied;
+
+  /// No description provided for @reminderFailure.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminders could not be scheduled. Check notification permission in your phone settings, then retry.'**
+  String get reminderFailure;
+
+  /// No description provided for @retryReminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry reminders'**
+  String get retryReminders;
+
+  /// No description provided for @expiryReminderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription expiry'**
+  String get expiryReminderTitle;
+
+  /// No description provided for @expiresTodayReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} expires today.'**
+  String expiresTodayReminder(String name);
+
+  /// No description provided for @expiresSoonReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} expires in 3 days.'**
+  String expiresSoonReminder(String name);
 }
 
 class _AppLocalizationsDelegate

@@ -286,5 +286,27 @@
   "coffeeIcon": "Coffee",
   "travelIcon": "Travel",
   "otherIcon": "Other",
-  "openError": "Could not open Tiko. Tap to retry."
+  "openError": "Could not open Tiko. Tap to retry.",
+  "expiryReminders": "Expiry reminders",
+  "expiryRemindersDescription": "Notifications 3 days before expiry and on the expiry date, at 9 AM.",
+  "reminderPermissionDenied": "Notifications are blocked. Allow Tiko notifications in your phone settings, then try again.",
+  "reminderFailure": "Reminders could not be scheduled. Check notification permission in your phone settings, then retry.",
+  "retryReminders": "Retry reminders",
+  "expiryReminderTitle": "Subscription expiry",
+  "expiresTodayReminder": "{name} expires today.",
+  "@expiresTodayReminder": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "expiresSoonReminder": "{name} expires in 3 days.",
+  "@expiresSoonReminder": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  }
 }

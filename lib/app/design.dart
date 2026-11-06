@@ -47,6 +47,11 @@ ThemeData tikoTheme(Brightness brightness) {
       hoverElevation: 0,
       highlightElevation: 0,
     ),
+    popupMenuTheme: PopupMenuThemeData(
+      color: scheme.surfaceContainerLow,
+      surfaceTintColor: Colors.transparent,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    ),
     navigationBarTheme: NavigationBarThemeData(
       backgroundColor: dark ? Color(0xff101816) : Color(0xffF5F8F6),
       elevation: 0,
@@ -69,6 +74,32 @@ ThemeData tikoTheme(Brightness brightness) {
       ),
     ),
   );
+}
+
+class ActionMenuLabel extends StatelessWidget {
+  const ActionMenuLabel({
+    super.key,
+    required this.icon,
+    required this.label,
+    this.color,
+  });
+  final IconData icon;
+  final String label;
+  final Color? color;
+
+  @override
+  Widget build(BuildContext context) {
+    final foreground = color ?? Theme.of(context).colorScheme.onSurface;
+    return Row(
+      children: [
+        Icon(icon, size: 20, color: foreground),
+        SizedBox(width: 12),
+        Flexible(
+          child: Text(label, style: TextStyle(color: foreground)),
+        ),
+      ],
+    );
+  }
 }
 
 class BrandMark extends StatelessWidget {
@@ -119,6 +150,7 @@ class _AppShellState extends ConsumerState<AppShell> {
     super.initState();
     lifecycle = AppLifecycleListener(
       onResume: () {
+        ref.read(reminderRefreshProvider.notifier).refresh();
         ref.invalidate(subscriptionsProvider);
         ref.invalidate(totalsProvider);
         ref.invalidate(eventsProvider);

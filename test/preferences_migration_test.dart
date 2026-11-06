@@ -47,7 +47,12 @@ void main() {
       );
       expect((await PreferencesRepository(database).load()).theme, 'system');
       await PreferencesRepository(database).save(
-        const AppPreferences(theme: 'dark', language: 'ro', haptics: false),
+        const AppPreferences(
+          theme: 'dark',
+          language: 'ro',
+          haptics: false,
+          expiryReminders: true,
+        ),
       );
       await database.close();
       database = TikoDatabase.forTesting(NativeDatabase(file));
@@ -55,6 +60,7 @@ void main() {
       expect(preferences.theme, 'dark');
       expect(preferences.language, 'ro');
       expect(preferences.haptics, isFalse);
+      expect(preferences.expiryReminders, isTrue);
       await database.close();
     },
   );

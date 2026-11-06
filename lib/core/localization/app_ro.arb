@@ -169,5 +169,27 @@
   "coffeeIcon": "Cafea",
   "travelIcon": "Călătorii",
   "otherIcon": "Altele",
-  "openError": "Tiko nu a putut fi deschis. Atinge pentru a reîncerca."
+  "openError": "Tiko nu a putut fi deschis. Atinge pentru a reîncerca.",
+  "expiryReminders": "Mementouri de expirare",
+  "expiryRemindersDescription": "Notificări cu 3 zile înainte de expirare și în ziua expirării, la ora 9:00.",
+  "reminderPermissionDenied": "Notificările sunt blocate. Permite notificările Tiko în setările telefonului, apoi încearcă din nou.",
+  "reminderFailure": "Mementourile nu au putut fi programate. Verifică permisiunea pentru notificări în setările telefonului, apoi reîncearcă.",
+  "retryReminders": "Reîncearcă mementourile",
+  "expiryReminderTitle": "Expirarea abonamentului",
+  "expiresTodayReminder": "{name} expiră astăzi.",
+  "@expiresTodayReminder": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "expiresSoonReminder": "{name} expiră peste 3 zile.",
+  "@expiresSoonReminder": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  }
 }

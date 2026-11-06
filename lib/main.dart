@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:io';
+import 'features/reminders/expiry_reminders.dart';
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -106,13 +108,62 @@ final router = GoRouter(
     ),
   ],
 );
-void main() => runApp(ProviderScope(child: Bootstrap()));
+final expiryReminderServiceProvider = Provider<ExpiryReminderService?>(
+  (ref) => null,
+);
+final reminderRefreshProvider = NotifierProvider<ReminderRefresh, int>(
+  ReminderRefresh.new,
+);
+
+class ReminderRefresh extends Notifier<int> {
+  @override
+  int build() => 0;
+  void refresh() => state++;
+}
+
+final reminderSyncProvider = FutureProvider<void>((ref) async {
+  ref.watch(reminderRefreshProvider);
+  final service = ref.watch(expiryReminderServiceProvider);
+  if (service == null) return;
+  final preferences = ref.watch(preferencesProvider);
+  final subscriptions = ref.watch(subscriptionsProvider);
+  if (!subscriptions.hasValue) return;
+  final language = preferences.language == 'system'
+      ? WidgetsBinding.instance.platformDispatcher.locale.languageCode
+      : preferences.language;
+  final l10n = await AppLocalizations.delegate.load(
+    Locale(language == 'ro' ? 'ro' : 'en'),
+  );
+  await service.sync(
+    subscriptions.requireValue,
+    preferences.expiryReminders,
+    l10n,
+  );
+});
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  final service = Platform.isAndroid || Platform.isIOS
+      ? ExpiryReminderService((id) {
+          WidgetsBinding.instance.addPostFrameCallback(
+            (_) => router.go('/subscriptions/${Uri.encodeComponent(id)}'),
+          );
+          WidgetsBinding.instance.scheduleFrame();
+        })
+      : null;
+  runApp(
+    ProviderScope(
+      overrides: [expiryReminderServiceProvider.overrideWithValue(service)],
+      child: Bootstrap(),
+    ),
+  );
+}
 
 class TikoApp extends ConsumerWidget {
   const TikoApp({super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final preferences = ref.watch(preferencesProvider);
+    ref.watch(reminderSyncProvider);
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'Tiko',
@@ -228,9 +279,18 @@ class _HomeState extends ConsumerState<HomeScreen> {
                     children: [
                       ListTile(
                         contentPadding: EdgeInsets.zero,
-                        leading: Icon(
-                          subscriptionIcon(subscription.icon),
-                          color: subscriptionColor(subscription.color),
+                        leading: Container(
+                          padding: EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: subscriptionColor(
+                              subscription.color,
+                            ).withValues(alpha: .12),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Icon(
+                            subscriptionIcon(subscription.icon),
+                            color: subscriptionColor(subscription.color),
+                          ),
                         ),
                         title: Text(
                           subscription.name,
@@ -254,19 +314,46 @@ class _HomeState extends ConsumerState<HomeScreen> {
                             : context.l10n.costPerUse(
                                 money(result.averageMinorUnits!),
                               ),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
+                            ),
                       ),
-                      Text(context.l10n.prepaid(money(result.cost))),
+                      SizedBox(height: 6),
+                      Text(
+                        context.l10n.prepaid(money(result.cost)),
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ),
                       if (result.breakEvenUses != null) ...[
                         SizedBox(height: 16),
                         LinearProgressIndicator(
+                          minHeight: 6,
+                          borderRadius: BorderRadius.circular(3),
                           value: result.progress?.clamp(0, 1) ?? 0,
                         ),
                         SizedBox(height: 8),
-                        Text(context.l10n.remainingUses(result.remainingUses!)),
+                        Text(
+                          context.l10n.remainingUses(result.remainingUses!),
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                              ),
+                        ),
                       ],
                       SizedBox(height: 20),
                       RecordUsageButton(subscription: subscription),
                       TextButton(
+                        style: TextButton.styleFrom(
+                          foregroundColor: Theme.of(
+                            context,
+                          ).colorScheme.onSurfaceVariant,
+                        ),
                         onPressed: () =>
                             context.push('/subscriptions/${subscription.id}'),
                         child: Text(context.l10n.detailsHistory),

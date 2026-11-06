@@ -133,6 +133,72 @@ void main() {
     await tester.pumpAndSettle();
     await tester.runAsync(database.close);
   });
+  testWidgets('Undo expires after five seconds without deleting the use', (
+    tester,
+  ) async {
+    await launch(tester);
+    await tester.tap(find.widgetWithText(FilledButton, '+1 USE'));
+    await settleDatabase(tester);
+    expect(find.text('Undo'), findsOneWidget);
+    await tester.pump(const Duration(seconds: 4));
+    expect(find.text('Undo'), findsOneWidget);
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pumpAndSettle();
+    expect(find.text('Undo'), findsNothing);
+    final remaining = await tester.runAsync(
+      () => database.select(database.usageEvents).get(),
+    );
+    expect(remaining, hasLength(1));
+    await tester.pumpWidget(const SizedBox());
+    await tester.pumpAndSettle();
+    await tester.runAsync(database.close);
+  });
+
+  testWidgets('Close dismisses Undo without deleting the use', (tester) async {
+    await launch(tester);
+    await tester.tap(find.widgetWithText(FilledButton, '+1 USE'));
+    await settleDatabase(tester);
+    await tester.tap(find.byTooltip('Close'));
+    await tester.pumpAndSettle();
+    expect(find.text('Undo'), findsNothing);
+    final remaining = await tester.runAsync(
+      () => database.select(database.usageEvents).get(),
+    );
+    expect(remaining, hasLength(1));
+    await tester.pump(const Duration(milliseconds: 600));
+    await tester.pumpWidget(const SizedBox());
+    await tester.pumpAndSettle();
+    await tester.runAsync(database.close);
+  });
+
+  testWidgets('New recording replaces Undo and targets only the latest use', (
+    tester,
+  ) async {
+    await launch(tester);
+    final button = find.widgetWithText(FilledButton, '+1 USE');
+    await tester.tap(button);
+    await settleDatabase(tester);
+    final first = await tester.runAsync(
+      () => database.select(database.usageEvents).getSingle(),
+    );
+    await tester.pump(const Duration(milliseconds: 600));
+    await tester.tap(button);
+    await settleDatabase(tester);
+    expect(find.text('Undo'), findsOneWidget);
+    await tester.tap(find.text('Undo'));
+    await settleDatabase(tester);
+    final remaining = await tester.runAsync(
+      () => database.select(database.usageEvents).get(),
+    );
+    expect(remaining!.map((event) => event.id), [first!.id]);
+    await tester.pump(const Duration(seconds: 6));
+    await tester.pumpAndSettle();
+    expect(find.text('Undo'), findsNothing);
+    await tester.pumpWidget(const SizedBox());
+    await tester.pumpAndSettle();
+    await tester.runAsync(database.close);
+  });
+
   testWidgets('Rapid taps record once and Undo deletes the created event', (
     tester,
   ) async {
@@ -151,6 +217,7 @@ void main() {
       () => database.select(database.usageEvents).get(),
     );
     expect(remaining, isEmpty);
+    expect(find.text('Undo'), findsNothing);
     await tester.pump(const Duration(milliseconds: 600));
     await tester.pumpWidget(const SizedBox());
     await tester.pumpAndSettle();

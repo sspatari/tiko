@@ -24,6 +24,8 @@ Android. There is no account, backend, telemetry, or production seed data.
   cumulative average cost and frequency. Per-subscription projections require
   seven elapsed days and activity on three dates; expired/archived periods are
   not forecast. Projections are explicitly labeled estimates.
+- Optional offline expiry notifications, enabled in Settings: three days before
+  expiry and on the expiry date at 9 AM local time. Tapping opens the subscription.
 - Persistent system/light/dark appearance, system/English/Romanian language,
   optional haptics and generated localized labels/plurals/date/currency formats.
 - Versioned JSON backups, validated transactional import with preview and UUID
@@ -136,3 +138,25 @@ with VoiceOver/TalkBack, release signing/store packaging and extended performanc
 profiling remain before a public release. The installed file-picker/share plugins
 currently emit a warning about future Flutter Kotlin Gradle Plugin compatibility;
 the present Android debug build succeeds. Interactive widgets remain optional.
+
+## Expiry reminders
+
+Enable **Settings → Expiry reminders** to request notification permission. No
+permission prompt appears at startup. Denial leaves the switch off; enable Tiko
+notifications in phone settings and retry. Existing in-app expiry labels remain
+available without notification permission.
+
+Reminders use local OS scheduling and work without internet or an open app.
+Edits, renewal, archive/restore, deletion, backup import and preference changes
+refresh the schedule. Only the newest created period in each renewal group gets
+reminders. Past reminder times are skipped. Disabling cancels Tiko notifications.
+The preference uses the existing app_settings table; old backups default it off.
+Restored preferences never prompt for OS permission automatically.
+
+The nearest 64 future notifications are scheduled to respect iOS limits; opening
+the app replenishes the schedule. Android uses inexact alarms without requiring
+special exact-alarm access, so delivery can be delayed by the OS. Android reboot
+and app-update receivers restore scheduled reminders. Time-zone and system-language
+changes refresh on app resume; reopen Tiko after travel to refresh local times.
+Notifications are localized in English/Romanian. OS delivery, permission prompts,
+reboot recovery and tap routing still need physical-device validation.

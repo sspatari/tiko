@@ -43,8 +43,13 @@ class _RecordUsageButtonState extends ConsumerState<RecordUsageButton> {
       ).add(subscription.id, occurredAt: now);
       if (ref.read(preferencesProvider).haptics) HapticFeedback.lightImpact();
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
+      final messenger = ScaffoldMessenger.of(context);
+      messenger.clearSnackBars();
+      messenger.removeCurrentSnackBar();
+      messenger.showSnackBar(
         SnackBar(
+          persist: false,
+          showCloseIcon: true,
           duration: Duration(seconds: 5),
           content: Text(context.l10n.recordedAt(DateFormat.Hm().format(now))),
           action: SnackBarAction(

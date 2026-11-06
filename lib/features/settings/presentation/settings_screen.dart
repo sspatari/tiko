@@ -96,9 +96,41 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     }
   }
 
+  Future<void> toggleReminders(AppPreferences preferences, bool enabled) async {
+    if (enabled) {
+      setState(() => busy = true);
+      try {
+        final allowed =
+            await ref
+                .read(expiryReminderServiceProvider)
+                ?.requestPermission() ??
+            false;
+        if (!allowed) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(context.l10n.reminderPermissionDenied)),
+            );
+          }
+          return;
+        }
+      } catch (_) {
+        if (mounted) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(context.l10n.reminderFailure)));
+        }
+        return;
+      } finally {
+        if (mounted) setState(() => busy = false);
+      }
+    }
+    await save(preferences.copyWith(expiryReminders: enabled));
+  }
+
   @override
   Widget build(BuildContext context) {
     final preferences = ref.watch(preferencesProvider);
+    final reminderSync = ref.watch(reminderSyncProvider);
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.settings)),
       body: ListView(
@@ -169,6 +201,23 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 ? null
                 : (value) => save(preferences.copyWith(haptics: value)),
           ),
+          SwitchListTile(
+            contentPadding: EdgeInsets.zero,
+            title: Text(context.l10n.expiryReminders),
+            subtitle: Text(context.l10n.expiryRemindersDescription),
+            value: preferences.expiryReminders,
+            onChanged: busy || ref.watch(expiryReminderServiceProvider) == null
+                ? null
+                : (value) => toggleReminders(preferences, value),
+          ),
+          if (reminderSync.hasError) ...[
+            Text(context.l10n.reminderFailure),
+            TextButton(
+              onPressed: () =>
+                  ref.read(reminderRefreshProvider.notifier).refresh(),
+              child: Text(context.l10n.retryReminders),
+            ),
+          ],
           Divider(height: 32),
           Text(
             context.l10n.yourData,

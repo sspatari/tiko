@@ -610,4 +610,35 @@ class AppLocalizationsRo extends AppLocalizations {
   @override
   String get openError =>
       'Tiko nu a putut fi deschis. Atinge pentru a reîncerca.';
+
+  @override
+  String get expiryReminders => 'Mementouri de expirare';
+
+  @override
+  String get expiryRemindersDescription =>
+      'Notificări cu 3 zile înainte de expirare și în ziua expirării, la ora 9:00.';
+
+  @override
+  String get reminderPermissionDenied =>
+      'Notificările sunt blocate. Permite notificările Tiko în setările telefonului, apoi încearcă din nou.';
+
+  @override
+  String get reminderFailure =>
+      'Mementourile nu au putut fi programate. Verifică permisiunea pentru notificări în setările telefonului, apoi reîncearcă.';
+
+  @override
+  String get retryReminders => 'Reîncearcă mementourile';
+
+  @override
+  String get expiryReminderTitle => 'Expirarea abonamentului';
+
+  @override
+  String expiresTodayReminder(String name) {
+    return '$name expiră astăzi.';
+  }
+
+  @override
+  String expiresSoonReminder(String name) {
+    return '$name expiră peste 3 zile.';
+  }
 }

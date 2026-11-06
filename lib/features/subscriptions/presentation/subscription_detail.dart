@@ -43,8 +43,9 @@ Future<bool> confirmAction(
   BuildContext context,
   String title,
   String message,
-  String action,
-) async =>
+  String action, {
+  bool destructive = false,
+}) async =>
     await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -52,10 +53,19 @@ Future<bool> confirmAction(
         content: Text(message),
         actions: [
           TextButton(
+            style: TextButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
             onPressed: () => Navigator.pop(context, false),
             child: Text(context.l10n.cancel),
           ),
           FilledButton(
+            style: destructive
+                ? FilledButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.error,
+                    foregroundColor: Theme.of(context).colorScheme.onError,
+                  )
+                : null,
             onPressed: () => Navigator.pop(context, true),
             child: Text(action),
           ),
@@ -74,6 +84,7 @@ Future<void> deleteUsage(
     context.l10n.deleteEventLabel,
     context.l10n.thisUsageEventWillBePermanentlyDeleted,
     context.l10n.delete,
+    destructive: true,
   )) {
     return;
   }
@@ -125,6 +136,7 @@ class _SubscriptionDetailState extends ConsumerState<SubscriptionDetail> {
         context.l10n.deleteSubscriptionLabel,
         context.l10n.deleteSubscriptionPrompt(subscription.name),
         context.l10n.delete,
+        destructive: true,
       );
       if (!confirmed || !mounted) return;
     }
@@ -186,23 +198,38 @@ class _SubscriptionDetailState extends ConsumerState<SubscriptionDetail> {
                 itemBuilder: (_) => [
                   PopupMenuItem(
                     value: 'edit',
-                    child: Text(context.l10n.editSubscription),
+                    child: ActionMenuLabel(
+                      icon: Icons.edit_outlined,
+                      label: context.l10n.editSubscription,
+                    ),
                   ),
                   PopupMenuItem(
                     value: 'renew',
-                    child: Text(context.l10n.renewSubscription),
+                    child: ActionMenuLabel(
+                      icon: Icons.autorenew,
+                      label: context.l10n.renewSubscription,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                   ),
                   PopupMenuItem(
                     value: 'archive',
-                    child: Text(
-                      subscription.isArchived
+                    child: ActionMenuLabel(
+                      icon: subscription.isArchived
+                          ? Icons.unarchive_outlined
+                          : Icons.archive_outlined,
+                      label: subscription.isArchived
                           ? context.l10n.restoreSubscription
                           : context.l10n.archiveSubscription,
                     ),
                   ),
+                  PopupMenuDivider(),
                   PopupMenuItem(
                     value: 'delete',
-                    child: Text(context.l10n.deleteSubscription),
+                    child: ActionMenuLabel(
+                      icon: Icons.delete_outline,
+                      label: context.l10n.deleteSubscription,
+                      color: Theme.of(context).colorScheme.error,
+                    ),
                   ),
                 ],
               ),
@@ -393,6 +420,7 @@ class _SubscriptionDetailState extends ConsumerState<SubscriptionDetail> {
                           ),
                           trailing: IconButton(
                             tooltip: context.l10n.deleteEvent,
+                            color: Theme.of(context).colorScheme.error,
                             icon: Icon(Icons.delete_outline),
                             onPressed: () => deleteUsage(
                               context,

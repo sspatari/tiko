@@ -300,11 +300,22 @@ class _UsageHistoryState extends ConsumerState<UsageHistory> {
                                       if (subscription != null)
                                         PopupMenuItem(
                                           value: 'edit',
-                                          child: Text(context.l10n.editEvent),
+                                          child: ActionMenuLabel(
+                                            icon: Icons.edit_outlined,
+                                            label: context.l10n.editEvent,
+                                          ),
                                         ),
+                                      if (subscription != null)
+                                        PopupMenuDivider(),
                                       PopupMenuItem(
                                         value: 'delete',
-                                        child: Text(context.l10n.deleteEvent),
+                                        child: ActionMenuLabel(
+                                          icon: Icons.delete_outline,
+                                          label: context.l10n.deleteEvent,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.error,
+                                        ),
                                       ),
                                     ],
                                   ),

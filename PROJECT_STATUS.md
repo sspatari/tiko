@@ -1,5 +1,60 @@
 # Tiko project status
 
+## Action and card visual refinements
+- Permanent subscription/event deletion now uses theme error colors in menus,
+  detail-page trash buttons and confirmation buttons. Cancel stays neutral;
+  non-destructive confirmations retain primary styling.
+- Subscription and History menus share icon/label styling with Delete separated
+  by a divider. Edit and Archive/Restore stay neutral; Renew uses the primary
+  color. Popup menus have consistent rounded surfaces in light and dark themes.
+- Home cards use tinted icon containers, clearer average-cost typography, quieter
+  prepaid/break-even labels, rounded progress bars and secondary Details links.
+  Existing localized labels, calculations and data behavior are preserved.
+- Verification: dart format lib test, flutter analyze, all 48 tests and git diff
+  --check pass. Existing widget tests cover large text, navigation, confirmation,
+  archive/restore and deletion. No new simulator or physical-device validation.
+  Next useful step: review Home and action menus on the phone in light/dark mode,
+  Romanian and large text, alongside the outstanding real notification checks.
+
+## Offline expiry notifications
+- Added opt-in Settings reminders at 9 AM local time three days before expiry
+  and on the expiry date. Permission is requested only when enabling; denied
+  permission leaves reminders off and shows guidance. Scheduling errors offer retry.
+- Local notifications refresh from reactive subscription/preference changes and
+  app resume, including edits, archive/restore, deletion, renewal and imports.
+  Only the newest created renewal period is scheduled. Notification taps open
+  details on cold/warm launch without recording usage; missing periods use the
+  existing recovery screen.
+- Preferences use the existing settings table with no schema migration; old
+  backups default reminders off. English/Romanian notifications are generated
+  from ARB strings. Android has boot/update receivers, a monochrome notification
+  icon and Java desugaring; iOS registers its notification delegate.
+- flutter_local_notifications is pinned to the compatible v21 major. An initial
+  v23 Android build failed on its SDK 37 requirement; the final v21 Android debug
+  APK and iOS simulator debug app both build successfully. Existing file-picker /
+  share KGP warnings remain. Formatting, analysis and all 48 tests pass; permission
+  UI and database-reopen tests also passed on a focused repeat. Whitespace checks
+  pass. No notification delivery or simulator/physical-device interaction was
+  manually validated for this feature.
+- Limits: nearest 64 future requests, past times skipped, Android inexact alarms
+  may be delayed, time-zone/system-language changes refresh on resume. See README.
+  Next useful step: enable notifications on iPhone/Android and check real delivery,
+  denial/re-enable, reboot recovery, tapping from a terminated app, and cancellation
+  after editing/renewing/archiving/deleting. Do not claim these device checks yet.
+
+## Undo timeout fix
+Recording snackbars explicitly disable persistence so Undo dismisses after five
+seconds on the current Flutter SDK. Flutter accessibility behavior is preserved.
+Regression tests verify expiry keeps the recorded use and pressing Undo dismisses
+the snackbar and deletes the event. Formatting and static analysis pass; all 37
+tests pass. No simulator or physical-device validation was performed for this fix.
+Recording messages now replace the previous snackbar and include a localized
+close button. Tests verify closing preserves the event, and replacement Undo
+deletes only the latest event without resurfacing older messages. Formatting,
+analysis and all 39 tests pass; whitespace checks pass. No device validation was
+performed. Next useful step: verify dismissal/replacement on the installed phone.
+Expiry phone notifications are now implemented above.
+
 ## Product and decisions
 Offline Flutter iOS/Android prepaid subscription tracker. Tagline: Every use counts.
 Both iOS and Android use com.sspatari.tiko (Apple rejected the previous com.tiko.app identifier for the configured team). This installs separately from the older com.tiko.tiko app; its data has not been deleted or automatically migrated. Outside-validity entries require an explicit override. No backend, authentication, telemetry or production mock data.
